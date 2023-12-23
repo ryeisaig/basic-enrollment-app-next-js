@@ -1,11 +1,14 @@
-import { Inter } from '@next/font/google'
+import { Auth } from "@/utils/AuthUtils";
+import { useEffect, useState } from "react";
+import Dashboard from "./dashboard/enrollment";
+import Login from "./login";
 
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
-  return (
-    <>
-      
-    </>
-  )
+const Lobby = () => {
+  const [isLogin, setLogin] = useState<boolean>(false);
+  useEffect(()=> {
+    setLogin(Auth.verifyToken());
+  }, [])
+  return isLogin ? <Dashboard/> : <Login/>
 }
+
+export default Lobby;

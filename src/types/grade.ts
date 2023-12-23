@@ -1,14 +1,18 @@
+import { AcademicPeriod } from "./academicperiod";
 import { Class } from "./class";
 import { Student } from "./student";
 
 export type Grade = {
     _id: string;
+    studentId?: string;
     student?: Student;
-    class: Class;
+    classId?: string;
+    class?: Class;
+    academicPeriod?: AcademicPeriod,
+    academicPeriodId?: string;
     grade?: string;
     removalGrade?: string;
     finalGrade?: string;
-    unit: number;
     creditUnit?: number;
-    status: string;
+    status: string; //draft | submitted | reviewed | finalized
 }

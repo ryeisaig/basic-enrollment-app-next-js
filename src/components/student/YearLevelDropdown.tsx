@@ -1,14 +1,4 @@
-import CustomDropdown from "../common/CustomDropdown";
-
-type DropdownProps = {
-    title?: string;
-    handler?: any;
-    fullWidth?: boolean;
-    style?: any;
-    size?: "small" | "medium";
-    required?: boolean;
-    value?: number;
-}
+import CustomDropdown, { DropdownProps } from "../common/dropdown/CustomDropdown";
 
 export default function YearLevelDropdown(props: DropdownProps){
    

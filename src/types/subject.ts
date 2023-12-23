@@ -1,5 +1,5 @@
 export type Subject = {
-    _id: string,
+    _id?: string,
     code: string,
     name?: string,
     description?: string,

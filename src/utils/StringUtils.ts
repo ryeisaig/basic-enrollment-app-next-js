@@ -1,4 +1,4 @@
-export const toTitle = (text: string) => {
+export const toTitle = (text: any) => {
   if(text){
     const result = text.replace(/([A-Z])/g, " $1");
     return result.charAt(0).toUpperCase() + result.slice(1);
@@ -22,4 +22,11 @@ export const ordinals = (value: number) => {
       return value + 'th';
     }
   }
+}
+
+export const isEmpty = (value?: string) => {
+  if(value === null || typeof(value) === 'undefined' || value.trim() === ''){
+    return true;
+  }
+  return false;
 }

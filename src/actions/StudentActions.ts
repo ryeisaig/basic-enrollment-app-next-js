@@ -1,37 +1,10 @@
-import { setListState, setLoadingState } from "@/store/listSlice";
+import { setCurrentStudent } from "@/store/enrollmentSlice";
+import { apiCall } from "@/utils/ApiUtils";
 
-export const getStudents = async (params: any, dispatch: any) => {
-    dispatch(setLoadingState(true));
-    const response = await fetch('/api/students?' + new URLSearchParams({
-        page: params.page || 0,
-        rowsPerPage: params.rowsPerPage || 5,
-        keyword: params.keyword || null,
-        ...params.sort,
-        ...params.filters
-    }));
+export const getStudentByStudentNumber = async (dispatch: any, studentNumber: string) => {
+    const response = await apiCall(`students?${new URLSearchParams({
+        studentNumber: studentNumber
+    })}`);
     const data = await response.json();
-    dispatch(setListState({
-        data: data.content, 
-        loading: false, 
-        totalElements: data.totalElements,
-        ...params
-    }));
-}
-
-export const saveStudent = async(newStudent: any, dispatch: any) => {
-    dispatch(setLoadingState(true));
-    await fetch('/api/students', {
-        method: 'POST', 
-        body: JSON.stringify(newStudent),
-        headers: {
-            'Content-Type' : 'application/json'
-        }});
-    dispatch(setListState({loading: false}));
-}
-
-export const deleteStudent = async(id: string, dispatch: any) => {
-    dispatch(setLoadingState(true));
-    await fetch('/api/students?' + new URLSearchParams({id: id}), 
-        { method: 'DELETE' });
-    dispatch(setListState({loading: false}));
+    dispatch(setCurrentStudent((data.content && data.content.length > 0) ? data.content[0] : {}));
 }

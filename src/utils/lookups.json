@@ -1,0 +1,71 @@
+{
+    "institutionName": "",
+    "logo": "",
+    "lookup": {
+        "requirements": [
+            {
+                "title": "Form 137",
+                "applicableCourseTypes": [],
+                "applicableColleges": [], 
+                "applicableCourses": [],
+                "applicableStudentType": []
+            },
+            {
+                "title": "Good Moral",
+                "applicableCourseTypes": [],
+                "applicableColleges": [], 
+                "applicableCourses": [],
+                "applicableStudentType": []
+            }
+        ],
+        "courseTypes": [
+            {
+                "key": "certificate",
+                "title": "Certificate",
+                "yearLevelApplicable": true,
+                "yearLevelRequired": true
+            },
+            {
+                "key": "vocational",
+                "title": "Vocational",
+                "yearLevelApplicable": true,
+                "yearLevelRequired": true
+            },
+            {
+                "key": "associate",
+                "title": "Associate",
+                "yearLevelApplicable": true,
+                "yearLevelRequired": true
+            },
+            {
+                "key": "bachelor",
+                "title": "Bachelor",
+                "yearLevelApplicable": true,
+                "yearLevelRequired": true
+            },
+            {
+                "key": "masteral",
+                "title": "Masteral",
+                "yearLevelApplicable": false,
+                "yearLevelRequired": false
+            },
+            {
+                "key": "doctoral",
+                "title": "Doctoral",
+                "yearLevelApplicable": false,
+                "yearLevelRequired": false
+            }
+        ],
+        "signatories": [
+            {
+                "cog": [
+                    {
+                        "name": "",
+                        "position": ""
+                    }
+                ]
+            }
+        ],
+        "roomTypes": ["LAB", "LEC"] 
+    }
+}

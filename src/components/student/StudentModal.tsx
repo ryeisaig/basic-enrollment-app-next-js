@@ -1,25 +1,20 @@
-import { getStudents, saveStudent } from "@/actions/StudentActions";
+import { getList, getPotentialMatches, save } from "@/actions/CoreActions";
 import { selectListState } from "@/store/listSlice";
 import { Student } from "@/types/student";
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Resources } from "@/utils/ApiConstants";
+import { Alert, Checkbox, FormControlLabel } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CivilStatusDropdown from "../common/CivilStatusDropdown";
-import CourseDropdown from "../common/CourseDropdown";
-import CustomDatePicker from "../common/CustomDatePicker";
-import CustomModal, { defaultFormStyle } from "../common/CustomModal";
-import CustomRadioField from "../common/CustomRadio";
-import CustomTextField from "../common/CustomTextField";
-import GenderDropdown from "../common/GenderDropdown";
-import PageSubtitle from "../common/PageSubtitle";
+import CivilStatusDropdown from "../common/dropdown/CivilStatusDropdown";
+import CourseDropdown from "../course/CourseDropdown";
+import CustomDatePicker from "../common/form/CustomDatePicker";
+import CustomModal, { ModalProps, defaultFormStyle } from "../common/wrapper/CustomModal";
+import CustomRadioField from "../common/form/CustomRadio";
+import CustomTextField from "../common/form/CustomTextField";
+import GenderDropdown from "../common/dropdown/GenderDropdown";
+import PageSubtitle from "../common/typography/PageSubtitle";
 import YearLevelDropdown from "./YearLevelDropdown";
-
-export type ModalProps = {
-  title: string;
-  open: boolean;
-  onClose: any;
-  data?: any;
-}
+import { toTitle } from "@/utils/StringUtils";
 
 export default function StudentModal(props: ModalProps) {
   const dispatch = useDispatch();
@@ -28,8 +23,8 @@ export default function StudentModal(props: ModalProps) {
   const initialStudentValues  = {
     studentNumber: '',
     cabinetId: '',
-    yearLevel: 0,
-    course: '',
+    yearLevel: '',
+    courseId: '',
     firstName: '',
     lastName: '',
     middleName: '',
@@ -48,9 +43,19 @@ export default function StudentModal(props: ModalProps) {
 
   const [newStudent, setNewStudent] = useState<Student>(initialStudentValues);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const studentFormValueChange = (field: string, value: string) => {
+  const studentFormValueChange = async(field: string, value: string) => {
     setNewStudent({...newStudent, [field]: value});
+
+    if(value?.length > 5){
+      const result = await getPotentialMatches(Resources.STUDENTS, {studentNumber: value});
+      if(result && result.content?.length > 0){
+        setError(`The student number ${value} is already assigned to ${toTitle(result.content[0].firstName + " " + result.content[0].lastName)}`)
+      } else {
+        setError("");
+      }
+    }
   }
 
   const guardianIsAdded = (field: string, value: string) => {
@@ -64,14 +69,17 @@ export default function StudentModal(props: ModalProps) {
   }
 
   const handleSubmit = async () => {
-    await saveStudent(newStudent, dispatch);
-    await getStudents({
-      filters: filters, 
-      sort: sort, 
-      keyword: keyword,
-      page: page,
-      rowsPerPage: rowsPerPage, 
-    }, dispatch);
+    await save(Resources.STUDENTS, newStudent, dispatch);
+    await getList(
+      Resources.STUDENTS,
+      {
+        filters: filters, 
+        sort: sort, 
+        keyword: keyword,
+        page: page,
+        rowsPerPage: rowsPerPage, 
+      }, 
+      dispatch);
     onClose();
   }
   const onClose = () => {
@@ -93,11 +101,12 @@ export default function StudentModal(props: ModalProps) {
 
   return (
     <CustomModal {...props} onClose={onClose} handleSubmit={handleSubmit}>
+        {error && error != "" && <Alert severity="error" onClose={() => setError("")}>{error}</Alert>}
         <PageSubtitle>Academic Information</PageSubtitle>
         <CustomTextField value={newStudent.studentNumber} required column='studentNumber' placeholder='Eg: 012345' handler={studentFormValueChange} style={defaultFormStyle}/>
-        <CourseDropdown value={newStudent.course} required size='small' style={defaultFormStyle} handler={studentFormValueChange}/>
+        <CourseDropdown value={newStudent.courseId} required size='small' style={defaultFormStyle} handler={studentFormValueChange}/>
         <YearLevelDropdown value={newStudent.yearLevel} size='small' style={{...defaultFormStyle, marginRight: '0px'}} handler={studentFormValueChange}/>
-        <CustomTextField value={newStudent.cabinetId} column='cabinetId' handler={studentFormValueChange} style={defaultFormStyle}/>
+        <CustomTextField value={newStudent.cabinetId} column='cabinetId' title="Cabinet ID" handler={studentFormValueChange} style={defaultFormStyle}/>
         <CustomTextField value={newStudent.yearGraduated} column='yearGraduated' handler={studentFormValueChange} style={defaultFormStyle}/>
         <CustomRadioField value={newStudent.type} required column="type" options={[{key: 'regular'}, {key: 'irregular'}]} handler={studentFormValueChange}/>
         <PageSubtitle>Personal Information</PageSubtitle>
@@ -114,7 +123,7 @@ export default function StudentModal(props: ModalProps) {
         <CustomTextField value={newStudent.presentAddress} required fullWidth column='presentAddress' style={{marginRight: '0px', marginBottom: '10px'}} handler={studentFormValueChange}/>
         <FormControlLabel control={<Checkbox onChange={(e) => setSameAddress(e.target.checked)}/>} label="Same as above" />
         <CustomTextField value={newStudent.permanentAddress} required fullWidth column='permanentAddress' style={{marginRight: '0px', marginBottom: '10px'}} handler={studentFormValueChange}/>
-        <PageSubtitle>Guardian's Information</PageSubtitle>
+        <PageSubtitle>Guardian&apos;s Information</PageSubtitle>
         <CustomTextField value={newStudent?.guardians && newStudent?.guardians[0]?.name} column='guardian.0.name' title="Guardian's Name" handler={guardianIsAdded} style={defaultFormStyle}/>
         <CustomTextField value={newStudent?.guardians && newStudent?.guardians[0]?.mobileNumber} column='guardian.0.mobileNumber' title="Guardian's Mobile Number" handler={guardianIsAdded} style={defaultFormStyle}/>
         <CustomTextField value={newStudent?.guardians && newStudent?.guardians[0]?.relationship} column='guardian.0.relationship' title="Relationship" style={{...defaultFormStyle, marginRight: '0px'}} handler={guardianIsAdded} />

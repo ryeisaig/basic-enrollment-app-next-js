@@ -1,12 +1,10 @@
-import { Html, Head, Main, NextScript } from 'next/document'
-import ResponsiveAppBar from '@/components/common/AppBar'
+import { Head, Html, Main, NextScript } from 'next/document'
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head />
-      <body style={{backgroundColor: "#eeeeee", overflow: "hidden"}}>
-        <ResponsiveAppBar />
+      <body style={{backgroundColor: "#fafafa", overflow: "hidden"}}>
         <Main />
         <NextScript />
       </body>

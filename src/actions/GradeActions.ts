@@ -1,8 +1,10 @@
-export const getGrades = async (callback: any, studentId: string, academicPeriod?: string) => {
-    const response = await fetch('/api/grades?' + new URLSearchParams({
+import { apiCall } from "@/utils/ApiUtils";
+
+export const getGradesByStudentAndAcademicPeriod = async (callback: any, studentId: string, academicPeriodId?: string) => {
+    const response = await apiCall(`grades?${new URLSearchParams({
         studentId: studentId,
-        academicPeriod: academicPeriod ? academicPeriod : ''
-    }));
+        academicPeriodId: academicPeriodId ? academicPeriodId : ''
+    })}`);
     
     const data = await response.json();
     callback(data.content);

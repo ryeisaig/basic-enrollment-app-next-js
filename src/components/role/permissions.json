@@ -1,0 +1,752 @@
+[
+    {
+        "group": "administrative",
+        "permissions": [
+            {
+                "value": "students.read",
+                "title": "Students - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "students.read-group",
+                "title": "Students - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "students.create",
+                "title": "Students - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "students.create-group",
+                "title": "Students - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "students.update",
+                "title": "Students - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "students.update-group",
+                "title": "Students - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "students.delete",
+                "title": "Students - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "students.delete-group",
+                "title": "Students - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.read",
+                "title": "Courses - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.read-group",
+                "title": "Courses - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.create",
+                "title": "Courses - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.create-group",
+                "title": "Courses - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.update",
+                "title": "Courses - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.update-group",
+                "title": "Courses - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.delete",
+                "title": "Courses - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "courses.delete-group",
+                "title": "Courses - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.read",
+                "title": "Colleges - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.read-group",
+                "title": "Colleges - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.create",
+                "title": "Colleges - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.create-group",
+                "title": "Colleges - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.update",
+                "title": "Colleges - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.update-group",
+                "title": "Colleges - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.delete",
+                "title": "Colleges - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "colleges.delete-group",
+                "title": "Colleges - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.read",
+                "title": "Rooms - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.read-group",
+                "title": "Rooms - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.create",
+                "title": "Rooms - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.create-group",
+                "title": "Rooms - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.update",
+                "title": "Rooms - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.update-group",
+                "title": "Rooms - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.delete",
+                "title": "Rooms - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "rooms.delete-group",
+                "title": "Rooms - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.read",
+                "title": "Instructors - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.read-group",
+                "title": "Instructors - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.create",
+                "title": "Instructors - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.create-group",
+                "title": "Instructors - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.update",
+                "title": "Instructors - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.update-group",
+                "title": "Instructors - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.delete",
+                "title": "Instructors - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "instructors.delete-group",
+                "title": "Instructors - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.read",
+                "title": "Sections - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.read-group",
+                "title": "Sections - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.create",
+                "title": "Sections - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.create-group",
+                "title": "Sections - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.update",
+                "title": "Sections - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.update-group",
+                "title": "Sections - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.delete",
+                "title": "Sections - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "sections.delete-group",
+                "title": "Sections - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.read",
+                "title": "Classes - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.read-group",
+                "title": "Classes - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.create",
+                "title": "Classes - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.create-group",
+                "title": "Classes - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.update",
+                "title": "Classes - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.update-group",
+                "title": "Classes - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.delete",
+                "title": "Classes - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "classes.delete-group",
+                "title": "Classes - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.read",
+                "title": "Grades - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.read-group",
+                "title": "Grades - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.create",
+                "title": "Grades - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.create-group",
+                "title": "Grades - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.update",
+                "title": "Grades - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.update-group",
+                "title": "Grades - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.delete",
+                "title": "Grades - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "grades.delete-group",
+                "title": "Grades - Delete only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.read",
+                "title": "Subjects - View any",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.read-group",
+                "title": "Subjects - View only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.create",
+                "title": "Subjects - Create any",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.create-group",
+                "title": "Subjects - Create only for my college",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.update",
+                "title": "Subjects - Update any",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.update-group",
+                "title": "Subjects - Update only under my college",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.delete",
+                "title": "Subjects - Delete any",
+                "group": "administrative"
+            },
+            {
+                "value": "subjects.delete-group",
+                "title": "Subjects - Delete only under my college",
+                "group": "administrative"
+            }
+        ]
+    },
+    {
+        "group": "system",
+        "permissions": [
+            {
+                "value": "academicPeriod.read",
+                "title": "Academic Period - View any",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.read-group",
+                "title": "Academic Period - View only under my college",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.create",
+                "title": "Academic Period - Create any",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.create-group",
+                "title": "Academic Period - Create only for my college",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.update",
+                "title": "Academic Period - Update any",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.update-group",
+                "title": "Academic Period - Update only under my college",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.delete",
+                "title": "Academic Period - Delete any",
+                "group": "system"
+            },
+            {
+                "value": "academicPeriod.delete-group",
+                "title": "Academic Period - Delete only under my college",
+                "group": "system"
+            },
+            {
+                "value": "users.read",
+                "title": "Users - View any",
+                "group": "system"
+            },
+            {
+                "value": "users.read-group",
+                "title": "Users - View only under my college",
+                "group": "system"
+            },
+            {
+                "value": "users.create",
+                "title": "Users - Create any",
+                "group": "system"
+            },
+            {
+                "value": "users.create-group",
+                "title": "Users - Create only for my college",
+                "group": "system"
+            },
+            {
+                "value": "users.update",
+                "title": "Users - Update any",
+                "group": "system"
+            },
+            {
+                "value": "users.update-group",
+                "title": "Users - Update only under my college",
+                "group": "system"
+            },
+            {
+                "value": "users.update-password",
+                "title": "Users - Update any password",
+                "group": "system"
+            },
+            {
+                "value": "users.update-password-group",
+                "title": "Users - Update password only under my college",
+                "group": "system"
+            },
+            {
+                "value": "users.delete",
+                "title": "Users - Delete any",
+                "group": "system"
+            },
+            {
+                "value": "users.delete-group",
+                "title": "Users - Delete only under my college",
+                "group": "system"
+            },
+            {
+                "value": "roles.read",
+                "title": "Roles - View any",
+                "group": "system"
+            },
+            {
+                "value": "roles.read-group",
+                "title": "Roles - View only under my college",
+                "group": "system"
+            },
+            {
+                "value": "roles.create",
+                "title": "Roles - Create any",
+                "group": "system"
+            },
+            {
+                "value": "roles.create-group",
+                "title": "Roles - Create only for my college",
+                "group": "system"
+            },
+            {
+                "value": "roles.update",
+                "title": "Roles - Update any",
+                "group": "system"
+            },
+            {
+                "value": "roles.update-group",
+                "title": "Roles - Update only under my college",
+                "group": "system"
+            },
+            {
+                "value": "roles.delete",
+                "title": "Roles - Delete any",
+                "group": "system"
+            },
+            {
+                "value": "roles.delete-group",
+                "title": "Roles - Delete only under my college",
+                "group": "system"
+            },
+            {
+                "value": "audit-trail.read",
+                "title": "Audit Trail - View any",
+                "group": "system"
+            },
+            {
+                "value": "trash-bin.read",
+                "title": "Trash Bin - View any",
+                "group": "system"
+            },
+            {
+                "value": "trash-bin.restore",
+                "title": "Trash Bin - Restore any",
+                "group": "system"
+            },
+            {
+                "value": "lookups.create",
+                "title": "Lookups - Create",
+                "group": "system"
+            },
+            {
+                "value": "lookups.read",
+                "title": "Lookups - View any",
+                "group": "system"
+            },
+            {
+                "value": "lookups.update",
+                "title": "Lookups - Update any",
+                "group": "system"
+            },
+            {
+                "value": "lookups.delete",
+                "title": "Lookups - Delete any",
+                "group": "system"
+            },
+            {
+                "value": "settings.read.",
+                "title": "Settings - View",
+                "group": "system"
+            },
+            {
+                "value": "settings.school-name.",
+                "title": "Settings - Update School Name",
+                "group": "system"
+            },
+            {
+                "value": "settings.logo.",
+                "title": "Settings - Update Logo",
+                "group": "system"
+            },
+            {
+                "value": "settings.theme.",
+                "title": "Settings - Update Theme",
+                "group": "system"
+            }
+        ]
+    },
+    {
+        "group": "enrollment",
+        "permissions": [
+            {
+                "value": "enrollments.read",
+                "title": "Enrollments - View any",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.read-group",
+                "title": "Enrollments - View only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.create",
+                "title": "Enrollments - Create any",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.create-group",
+                "title": "Enrollments - Create only for my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.update",
+                "title": "Enrollments - Update any",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.update-group",
+                "title": "Enrollments - Update only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.delete",
+                "title": "Enrollments - Delete any",
+                "group": "enrollment"
+            },
+            {
+                "value": "enrollments.delete-group",
+                "title": "Enrollments - Delete only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.read",
+                "title": "Admissions - View any",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.read-group",
+                "title": "Admissions - View only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.create",
+                "title": "Admissions - Create any",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.create-group",
+                "title": "Admissions - Create only for my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.update",
+                "title": "Admissions - Update any",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.update-group",
+                "title": "Admissions - Update only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.delete",
+                "title": "Admissions - Delete any",
+                "group": "enrollment"
+            },
+            {
+                "value": "admissions.delete-group",
+                "title": "Admissions - Delete only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.read",
+                "title": "Preregistrations - View any",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.read-group",
+                "title": "Preregistrations - View only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.create",
+                "title": "Preregistrations - Create any",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.create-group",
+                "title": "Preregistrations - Create only for my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.update",
+                "title": "Preregistrations - Update any",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.update-group",
+                "title": "Preregistrations - Update only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.delete",
+                "title": "Preregistrations - Delete any",
+                "group": "enrollment"
+            },
+            {
+                "value": "preregistrations.delete-group",
+                "title": "Preregistrations - Delete only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.read",
+                "title": "Credit Evaluations - View any",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.read-group",
+                "title": "Credit Evaluations - View only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.create",
+                "title": "Credit Evaluations - Create any",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.create-group",
+                "title": "Credit Evaluations - Create only for my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.update",
+                "title": "Credit Evaluations - Update any",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.update-group",
+                "title": "Credit Evaluations - Update only under my college",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.delete",
+                "title": "Credit Evaluations - Delete any",
+                "group": "enrollment"
+            },
+            {
+                "value": "credit-evaluations.delete-group",
+                "title": "Credit Evaluations - Delete only under my college",
+                "group": "enrollment"
+            }
+        ]
+    },
+    {
+        "group": "form",
+        "permissions": [
+            {
+                "value": "forms.read",
+                "title": "Forms - Download",
+                "group": "form"
+            },
+            {
+                "value": "forms.create",
+                "title": "Forms - Upload",
+                "group": "form"
+            },
+            {
+                "value": "forms.delete",
+                "title": "Forms - Delete",
+                "group": "form"
+            }
+        ]
+    },
+    {
+        "group": "report",
+        "permissions": [
+            {
+                "value": "reports.read",
+                "title": "Reports - View any",
+                "group": "report"
+            }
+        ]
+    }
+]

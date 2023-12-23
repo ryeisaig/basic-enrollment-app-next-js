@@ -1,39 +1,34 @@
-import { getCourses } from "@/actions/CourseActions";
-import { getSection } from "@/actions/SectionActions";
+import { getSectionsByCourseAndYearLevel } from "@/actions/SectionActions";
 import { selectListState } from "@/store/listSlice";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import CustomDropdown from "../common/CustomDropdown";
-
-type DropdownProps = {
-    title?: string;
-    handler?: any;
-    fullWidth?: boolean;
-    style?: any;
-    size?: "small" | "medium";
-    required?: boolean;
-}
+import CustomDropdown, { DropdownProps } from "../common/dropdown/CustomDropdown";
 
 export default function SectionDropdown(props: DropdownProps){
     const dispatch = useDispatch();
     const { lookups }: any = useSelector(selectListState);
-    const sectionOptions = lookups.section ? lookups.section.map((lookup: any) => { 
-        return { key: lookup._id, value: lookup.course.code + ' ' + lookup.year + '-' + lookup.sectionNumber }
+
+    let filteredOptions = lookups?.section;
+    if(props.filter){
+        Object.keys(props.filter).map(key => {
+            filteredOptions = filteredOptions?.filter((section: any) => props.filter[key] ? section[key] === props.filter[key] : true)
+        });
+    }
+
+    const sectionOptions = filteredOptions ? filteredOptions.map((option: any) => { 
+        return { key: option._id, value: option.course.code + ' ' + option.yearLevel + '-' + option.sectionNumber }
     }) : [];
     
     useEffect(() => {
-        getSection(dispatch);
-    }, []);
+        getSectionsByCourseAndYearLevel(dispatch);
+    }, [dispatch]);
 
     return (
         <CustomDropdown 
-            fullWidth={props.fullWidth} 
-            handler={props.handler} 
-            title={props.title} 
-            column="section" options={sectionOptions} 
-            size={props.size} 
-            style={props.style}
-            required={props.required}
+            column="sectionId" 
+            title="Section"
+            options={sectionOptions} 
+            {...props}
         />
     );
 

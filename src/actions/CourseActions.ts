@@ -1,7 +1,7 @@
-import { addLookup } from "@/store/listSlice";
+import { apiCall } from "@/utils/ApiUtils";
 
-export const getCourses = async (dispatch: any) => {
-    const response = await fetch('/api/courses');
+export const getCoursesByCollege = async (collegeId: string, callback: any) => {
+    const response = await apiCall(`courses?collegeId=${collegeId}`);
     const data = await response.json();
-    dispatch(addLookup({course: data.content}))
+    callback(data.content);
 }

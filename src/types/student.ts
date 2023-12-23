@@ -1,3 +1,6 @@
+import { Course } from "./course";
+import { Enrollment } from "./enrollment";
+
 export type Student = {
     _id?: string,
     lastName?: string,
@@ -14,16 +17,17 @@ export type Student = {
     guardians?: Guardian[],
     cabinetId?: string,
     yearGraduated?: string,
-    status?: string,
-    type?: string,
-    yearLevel?: number,
-    course?: string, 
+    status?: string, // should be updated from latest enrollment
+    type?: string, // should be updated from latest enrollment
+    yearLevel?: string, // should be updated from latest enrollment
+    courseId?: string, // should be updates from latest enrollment
+    course?: Course, // should be updated from latest enrollment
     studentNumber?: string,
     createdBy?: string,
     lastUpdatedBy?: string,
     dateCreated?: string,
     dateLastUpdated?: string,
-    lastAcademicPeriodEnrolled?: string
+    latesEnrollment?: Enrollment
 }
 
 type Guardian = {
