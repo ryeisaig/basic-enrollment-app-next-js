@@ -1,20 +1,24 @@
-import { withPagePermission } from "@/components/auth/withPermission"
+import { withFunctionalPermission, withPagePermission } from "@/components/auth/withPermission"
 import { getColumnChunks } from "@/utils/ArrayUtils"
 import * as StringUtils from '@/utils/StringUtils'
-import { Divider, Grid, Paper } from "@mui/material"
+import { Button, Divider, Grid, Paper } from "@mui/material"
 import CustomBreadcrumb from "../nav/CustomBreadcrumb"
 import { LabeledText } from "../typography/LabeledText"
 import PageSubtitle from "../typography/PageSubtitle"
 import CustomPage from "./CustomPage"
 import { Grouper } from "./Grouper"
+import { styled } from '@mui/material/styles';
+import { CloudUploadOutlined } from "@mui/icons-material"
 
 export type CustomDetailsPageProps<T> = {
+    resource: string,
     permissions: string[],
     title: string,
     breadcrumbLinks: any,
     data: T,
     actions: any,
     avatar?: any,
+    uploadAvatar?: any,
     primaryColumns: Array<
         {
             column: string,
@@ -37,6 +41,18 @@ export type CustomDetailsPageProps<T> = {
     children?: any
 }
 
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
+
 export default function DefaultDetailsPage(props: CustomDetailsPageProps<any>){
     return props.data && withPagePermission(props.permissions,
         <CustomPage>
@@ -51,6 +67,15 @@ export default function DefaultDetailsPage(props: CustomDetailsPageProps<any>){
                 <Grid container>
                   <Grid item xs={3}>
                     {props.avatar}
+                    {
+                        withFunctionalPermission(
+                            <Button sx={{fontSize: "12px", marginTop: "6px"}} component="label" startIcon={<CloudUploadOutlined />}>
+                                Upload Photo
+                                <VisuallyHiddenInput type="file" onChange={(e) => e.target.files?.[0] && props.uploadAvatar(e.target.files?.[0])} />
+                            </Button>, [`${props.resource}.update`,`${props.resource}.update-group`]
+                        )
+                    }
+                  
                   </Grid>
                   <Grid item xs={9}>
                     <div>

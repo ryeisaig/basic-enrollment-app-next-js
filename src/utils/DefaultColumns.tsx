@@ -1,14 +1,14 @@
 import RegularityBadge from "@/components/common/typography/RegularityBadge";
 import { ordinals, toTitle } from "./StringUtils";
 import NotSpecified from "@/components/common/typography/NotSpecified";
-import GenderAvatar from "@/components/student/GenderAvatar";
 import moment from "moment";
 import { periodMap } from "@/components/academicPeriod/AcademicSubPeriodDropdown";
 import { Chip } from "@mui/material";
+import AvatarDisplay from "@/components/student/Avatar";
 
 export const STUDENT = {
     PRIMARY: [
-        { key: "gender", title: " ", width: "60px", presentation: GenderAvatar},
+        { key: "avatar", title: " ", width: "60px", presentation: AvatarDisplay},
         { key: "studentNumber", title: "Student No.",  width: "140px"},
         { key: "lastName+,+firstName+middleName", title: "Name", transform: (value: string) => toTitle(value)},
         { key: "emailAddress"},

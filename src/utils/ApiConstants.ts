@@ -22,6 +22,7 @@ export const Resources = {
     ENROLLMENTS: "enrollments",
     AUTH: "auth",
     STUDENT_NUMBER: "studentNumbers",
+    FILES: "files",
 }
 
 export const LookupKeys = {

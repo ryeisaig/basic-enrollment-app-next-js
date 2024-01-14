@@ -27,7 +27,8 @@ export type Student = {
     lastUpdatedBy?: string,
     dateCreated?: string,
     dateLastUpdated?: string,
-    latesEnrollment?: Enrollment
+    latesEnrollment?: Enrollment,
+    avatar?: string
 }
 
 type Guardian = {

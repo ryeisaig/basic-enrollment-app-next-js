@@ -3,27 +3,27 @@ import { Resources } from "@/utils/ApiConstants";
 import clientPromise from '../lib/mongodb';
 import { ObjectId } from "mongodb";
 
-export const processEnrollmentForNewStudent = async(req: any, res: any) => {
+export const processEnrollmentForNewStudent = async(data: any) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
 
-    const enrollment =  {...req.body};
-    const student = {...req.body.student}
+    const enrollment =  {...data};
+    const student = {...data.student}
 
     if(student._id){
-        student['courseId'] = req.body.courseId;
-        student['type'] = req.body.enrollmentType;
-        student['yearLevel'] = req.body.yearLevel;
+        student['courseId'] = data.courseId;
+        student['type'] = data.enrollmentType;
+        student['yearLevel'] = data.yearLevel;
         student['updateDateTime'] = new Date();
         const studentId = student._id;
         delete student._id;
         await db.collection(Resources.STUDENTS).updateOne({_id : new ObjectId(studentId)}, { $set: student });
     } else {
-        const studentNumber = await generateStudentNumber(req.body.academicPeriodId);
+        const studentNumber = await generateStudentNumber(data.academicPeriodId);
         student['studentNumber'] = studentNumber;
-        student['courseId'] = req.body.courseId;
-        student['type'] = req.body.enrollmentType;
-        student['yearLevel'] = req.body.yearLevel;
+        student['courseId'] = data.courseId;
+        student['type'] = data.enrollmentType;
+        student['yearLevel'] = data.yearLevel;
         student['createDateTime'] = new Date();
         student['updateDateTime'] = new Date();
         const studentData = await db.collection(Resources.STUDENTS).insertOne(student);
@@ -41,35 +41,35 @@ export const processEnrollmentForNewStudent = async(req: any, res: any) => {
         newData = await db.collection(Resources.ENROLLMENTS).insertOne(enrollment);
     }
     
-    res.status(200).json({'result': 'success', 'data': newData});
+    return Response.json({'result': 'success', 'data': newData});
 }
 
-export const processEnrollmentForOldStudent = async(req: any, res: any) => {
+export const processEnrollmentForOldStudent = async(data: any) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
 
-    const student = {...req.body.student}
-    student['courseId'] = req.body.courseId;
-    student['type'] = req.body.enrollmentType;
-    student['yearLevel'] = req.body.yearLevel;
+    const student = {...data.student}
+    student['courseId'] = data.courseId;
+    student['type'] = data.enrollmentType;
+    student['yearLevel'] = data.yearLevel;
     student['updateDateTime'] = new Date();
 
     const studentId = student._id;
     delete student._id;
     await db.collection(Resources.STUDENTS).updateOne({_id : new ObjectId(studentId)}, { $set: student });
     
-    req.body['updateDateTime'] = new Date();
-    req.body['createDateTime'] = new Date();
+    data['updateDateTime'] = new Date();
+    data['createDateTime'] = new Date();
 
     let newData;
-    if(req.body._id){
-        let enrollmentId = req.body._id;
-        delete req.body._id;
-        newData = await db.collection(Resources.STUDENTS).updateOne({_id : new ObjectId(enrollmentId)}, { $set: req.body });
+    if(data._id){
+        let enrollmentId = data._id;
+        delete data._id;
+        newData = await db.collection(Resources.STUDENTS).updateOne({_id : new ObjectId(enrollmentId)}, { $set: data });
     } else {
-        req.body['createDateTime'] = new Date();
-        newData = await db.collection(Resources.ENROLLMENTS).insertOne(req.body);
+        data['createDateTime'] = new Date();
+        newData = await db.collection(Resources.ENROLLMENTS).insertOne(data);
     }
 
-    res.status(200).json({'result': 'success', 'data': newData});
+    return Response.json({'result': 'success', 'data': newData});
 }

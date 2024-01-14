@@ -1,4 +1,4 @@
-import { getById } from "@/actions/CoreActions";
+import { getById, saveNoDispatch } from "@/actions/CoreActions";
 import { withFunctionalPermission } from "@/components/auth/withPermission";
 import { NumericStat } from "@/components/common/stat/NumericStat";
 import { StatBadge } from "@/components/common/stat/StatBadge";
@@ -7,6 +7,7 @@ import EnrolledClassList from "@/components/grade/DetailedGradeList";
 import StudentModal from "@/components/student/StudentModal";
 import { Student } from "@/types/student";
 import { Resources } from "@/utils/ApiConstants";
+import { Auth } from "@/utils/AuthUtils";
 import { mmddyyyy } from "@/utils/DateUtils";
 import { LABELS } from "@/utils/Labels";
 import * as StringUtils from '@/utils/StringUtils';
@@ -31,8 +32,25 @@ export default function StudentProfile(){
       id && init();
     }, [id]);
 
+    const uploadPhoto = async(file: any) => {
+      const data = new FormData();
+      data.append("file", file);
+      const res = await fetch(`/api/files`, {
+        method: 'POST',
+        body: data,
+        headers: {
+          'Authorization' : `Bearer ${Auth.getToken()}`,
+        }
+      });
+
+      const uploadResult: any = await res.json();
+      uploadResult?.success && await saveNoDispatch(Resources.STUDENTS, {_id: id, avatar: uploadResult?.path})
+      init();
+    }
+
     return(
       <DefaultDetailsPage
+        resource={Resources.STUDENTS}
         permissions={["students.read","students.read-group"]} 
         title={data?.studentNumber || ""} 
         breadcrumbLinks={[{path: "../students", title: "Students"}]} 
@@ -42,13 +60,14 @@ export default function StudentProfile(){
               <Button key="edit" variant="contained" color="primary" onClick={() => setOpenEdit(true)} style={{float: "right", height: "32px", marginRight: "10px"}}><EditOutlined style={{marginRight: "10px"}}/> {LABELS.EDIT}</Button>,
               ["students.update","students.update-group"]
             ),
-            <Button key="print-tor" variant="contained" color="secondary" style={{float: "right", height: "32px", marginRight: "10px"}}><ListOutlined style={{marginRight: "10px"}}/> {LABELS.PRINT_TOR}</Button>,
+            <Button key="print_tor" variant="contained" color="secondary" style={{float: "right", height: "32px", marginRight: "10px"}}><ListOutlined style={{marginRight: "10px"}}/> {LABELS.PRINT_TOR}</Button>,
             <Button key="print_cog" variant="contained" color="secondary" style={{float: "right", height: "32px", marginRight: "10px"}}><PrintOutlined style={{marginRight: "10px"}}/> {LABELS.PRINT_COG}</Button>,
             <Button key="audit" variant="contained" color="secondary" style={{float: "right", height: "32px", marginRight: "10px"}}><TimerOutlined style={{marginRight: "10px"}}/> {LABELS.AUDIT}</Button>
           ]
         }
         data={data}
-        avatar={<Avatar style={{width: "150px", height: "150px"}}/>}
+        avatar={<Avatar src={`../api/files/${data?.avatar}`} style={{width: "120px", height: "120px", marginLeft: "10px"}}/>}
+        uploadAvatar={(file: any) => uploadPhoto(file)}
         primaryColumns={[
           { column: "studentNumber" },
           { column: "course", presentation: (data: any) => data.code},

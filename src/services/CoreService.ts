@@ -3,7 +3,7 @@ import clientPromise from '../lib/mongodb';
 import { ObjectId } from 'mongodb';
 // @ts-ignore
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest } from "next";
 
 export type Mapping = {
   collection: string;
@@ -22,19 +22,19 @@ const verifyJWT = (token: any) => {
   }
 }
 
-export const validateRequest = (req: NextApiRequest, res: NextApiResponse, requiredPermissions?: string[]) => {
+export const validateRequest = (req: any, requiredPermissions?: string[]) => {
   const accessToken = req.headers?.authorization?.split(' ')[1];
   if(accessToken === process.env.BYPASS_TOKEN){
     return;
   }
 
-  if(!accessToken) return res.status(401).json({message: 'Unauthorized!'});
+  if(!accessToken) return Response.json({message: 'Unauthorized!'}, {status: 401});
 
   const decoded = verifyJWT(accessToken);
   if (!decoded) {
-    return res.status(401).json({message: 'Unauthorized!'});
+    return Response.json({message: 'Unauthorized!'}, {status: 401});
   } else if(requiredPermissions && !decoded.permissions?.some((p:string) => requiredPermissions.includes(p))){
-    return res.status(403).json({message: 'Forbidden!'});
+    return Response.json({message: 'Forbidden!'}, {status: 403});
   }
   
   return decoded;
@@ -70,21 +70,27 @@ export const getPotentialMatches = async(resource: string, query: any, mapping?:
     }}
   ];
 
-  return await db.collection(resource)
+  const data = await db.collection(resource)
   .aggregate(pipeline).toArray();
+
+  return Response.json({
+    content: data,
+  });
 }
 
-export const getAll = async (req: any, res: any, resource: string, searchOptions?: string[], mapping?: Mapping[]) => {
+export const getAll = async (req: Request, resource: string, searchOptions?: string[], mapping?: Mapping[]) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
     
+    const {searchParams} = new URL(req.url);
+
     const {
       rowsPerPage, 
       page, 
       keyword, 
       sortField, 
       sortType
-    } = getListParams(req.query);
+    } = getListParams(searchParams);
     
     let search = {};
     if(keyword != null && keyword.trim() != ''){
@@ -120,11 +126,10 @@ export const getAll = async (req: any, res: any, resource: string, searchOptions
     }) : [];
 
     const setters = mapping ? mapping.reduce((acc: any, curr)=> curr.type === "single" && (acc[curr.as]={'$first': `$${curr.as}`}, acc), {}) : {}
-
     let pipeline = [
       {'$match': {
         ...search,
-        ...getNonBlankOrNullQueryParam(req.query),
+        ...getNonBlankOrNullQueryParam(searchParams),
         deleteDateTime: null
       }},
       ...lookups,
@@ -142,18 +147,19 @@ export const getAll = async (req: any, res: any, resource: string, searchOptions
     const count = await db.collection(resource)
     .countDocuments({    
       ...search,
-      ...getNonBlankOrNullQueryParam(req.query),
+      ...getNonBlankOrNullQueryParam(searchParams),
       deleteDateTime: null
     })
-  
-    res.status(200).json({
+
+
+    return Response.json({
       totalElements: count, 
-      content: data,
+      content: data
     });
   }
 
 
-export const getById = async(req: any, res: any, resource: string, mapping?: Mapping[]) => {
+export const getById = async(id: string, resource: string, mapping?: Mapping[]) => {
   const client = await clientPromise;
   const db = client.db('enrollment');
 
@@ -173,7 +179,7 @@ export const getById = async(req: any, res: any, resource: string, mapping?: Map
 
   let pipeline = [
     {'$match': {
-      _id:  new ObjectId(req.query.id),
+      _id:  new ObjectId(id),
       deleteDateTime: null
     }},
     ...lookups,
@@ -186,41 +192,41 @@ export const getById = async(req: any, res: any, resource: string, mapping?: Map
   .aggregate(pipeline)
   .limit(1).toArray();
   
-  res.status(200).json({content: data[0]});
+  return Response.json({content: data[0]})
 }
 
-export const create = async(req: any, res: any, resource: string) => {
+export const create = async(newData: any, resource: string) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
-    const request = req.body;
+    const request = newData;
     request.createDateTime = new Date();
     request.updateDateTime = new Date();
     const data = await db.collection(resource).insertOne(request);
-    res.status(200).json({'result': 'success', 'data': data});
+    return Response.json({'result': 'success', 'data': data}, {status: 201});
 }
   
 
-export const update = async(req: any, res: any, resource: string) => {
+export const update = async(id: string, newData: any, resource: string) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
-    const request = { ...req.body};
+    const request = { ...newData};
     delete request._id;
     request.updateDateTime = new Date();
   
-    await db.collection(resource).updateOne({_id : new ObjectId(req.body._id)}, { $set: request });
-    res.status(200).json({'result': 'success'});
+    await db.collection(resource).updateOne({_id : new ObjectId(id)}, { $set: request });
+    return Response.json({'result': 'success'});
 }
 
-export const remove = async(req: any, res: any, resource: string) => {
+export const remove = async(id: string, resource: string) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
 
-    const data = await db.collection(resource).findOne({_id : new ObjectId(req.query.id)});
+    const data = await db.collection(resource).findOne({_id : new ObjectId(id)});
     const toBeDeleted = {...data};
 
     toBeDeleted.deleteDateTime= new Date();
     delete toBeDeleted._id;
 
-    await db.collection(resource).updateOne({_id : new ObjectId(req.query.id)}, { $set: toBeDeleted });
-    res.status(200).json({'result': 'success'});
+    await db.collection(resource).updateOne({_id : new ObjectId(id)}, { $set: toBeDeleted });
+    return Response.json({'result': 'success'});
 }

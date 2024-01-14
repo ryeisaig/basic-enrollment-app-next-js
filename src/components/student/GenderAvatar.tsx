@@ -1,7 +1,8 @@
 import { Face3, Face6 } from '@mui/icons-material';
+import { Avatar } from '@mui/material';
 
 export default function GenderAvatar(gender: any) {
-  if(gender === "male")
+ if(gender === "male")
     return (
         <Face6 sx={{fontSize: "30px", color: "#2196f3"}}/>
     )

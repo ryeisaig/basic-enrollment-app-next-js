@@ -2,25 +2,26 @@ import * as StringUtils from '@/utils/StringUtils';
 
 export const getListParams = (query: any) => {
   
-  const rowsPerPage = parseInt(query.rowsPerPage) ||  null; 
-  const page = parseInt(query.page) || null;
-  const keyword = query.keyword;
-  const sortField = query.sortField || "updateDateTime" ;
-  const sortType = query.sortType || "desc";
+  
+  const rowsPerPage = parseInt(query.get("rowsPerPage")) ||  null; 
+  const page = parseInt(query.get("page")) || null;
+  const keyword = query.get("keyword");
+  const sortField = query.get("sortField") || "updateDateTime" ;
+  const sortType = query.get("sortType") || "desc";
 
-  delete query.rowsPerPage;
-  delete query.page;
-  delete query.keyword;
-  delete query.sortField;
-  delete query.sortType;
+  query.delete("rowsPerPage");
+  query.delete("page");
+  query.delete("keyword");
+  query.delete("sortField");
+  query.delete("sortType");
 
   return { rowsPerPage, page, keyword, sortField, sortType };
 }
 
 export const getNonBlankOrNullQueryParam = (query: any) => {
-  Object.entries(query).forEach((entry: any) => {
+ query.forEach((entry: any) => {
     if(StringUtils.isEmpty(entry[1])){
-      delete query[entry[0]];
+      query.delete(entry[0])
     }
   });
 
