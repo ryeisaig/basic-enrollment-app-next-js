@@ -11,6 +11,7 @@ import * as React from 'react';
 import ActionMenu from '../menu/ActionMenu';
 import { Column, getData, StyledTableCell, StyledTableRow } from './DefaultList';
 import NotSpecified from '../typography/NotSpecified';
+import { useDispatch } from 'react-redux';
 
 export type RowProps = {
   row: any,
@@ -25,6 +26,8 @@ export const DEFAULT_LABEL_EXCLUSIONS = ["_id", "courseId", "collegeId", "sectio
 export default function CollapsibleRow(props: RowProps) {
 
   const [open, setOpen] = React.useState(false);
+
+  const dispatch = useDispatch();
 
   let allDisplayedKeys = props.columns.map((col) => col.key.split("+")).flat();
   let exclusions = allDisplayedKeys.map((key) => key.split(".")[0]);
@@ -51,9 +54,9 @@ export default function CollapsibleRow(props: RowProps) {
           props.columns.map((col: Column) => (
             <StyledTableCell key={col.key} align={col.align ? col.align : 'left'} width={col.width}>
                 {col.presentation ? 
-                  col.presentation(getData(col, props.row, col.json)) :
+                  col.presentation(getData(col, props.row, col.json), props.row) :
                   col.transform ?
-                    col.transform(getData(col, props.row, col.json)) : 
+                    col.transform(getData(col, props.row, col.json), props.row, dispatch) : 
                     getData(col, props.row)}
             </StyledTableCell>
             ))

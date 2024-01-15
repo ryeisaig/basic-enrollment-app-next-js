@@ -10,21 +10,21 @@ export const ordinals = (value: number) => {
   const remainder = value % 10;
   switch(remainder) {
     case 1: {
-      return value + 'st';
+      return value + 'ST';
     }
     case 2: {
-      return value + 'nd';
+      return value + 'ND';
     }
     case 3: {
-      return value + 'rd';
+      return value + 'RD';
     }
     default: {
-      return value + 'th';
+      return value + 'TH';
     }
   }
 }
 
-export const isEmpty = (value?: string) => {
+export const isEmpty = (value?: any) => {
   if(value === null || typeof(value) === 'undefined' || value.trim() === ''){
     return true;
   }

@@ -26,7 +26,7 @@ export type Class = {
     schedule: Schedule[];
     maxCount?: number;
     createdBy?: string;
-    lastUpdatedBy?: string;
+    updatedBy?: string;
     dateCreated?: string;
-    dateLastUpdated?: string;
+    updateDateTime?: string;
 }

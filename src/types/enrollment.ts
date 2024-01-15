@@ -24,7 +24,7 @@ export type Enrollment = {
     classes: Class[],
     grades?: Grade[],
     createdBy?: string;
-    lastUpdatedBy?: string;
+    updatedBy?: string;
     dateCreated?: string;
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

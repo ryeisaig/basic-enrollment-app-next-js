@@ -2,7 +2,7 @@ import { getList, getPotentialMatches, save } from "@/actions/CoreActions";
 import { selectListState } from "@/store/listSlice";
 import { Student } from "@/types/student";
 import { Resources } from "@/utils/ApiConstants";
-import { Alert, Checkbox, FormControlLabel } from "@mui/material";
+import { Alert, Avatar, Checkbox, FormControlLabel, Link } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CivilStatusDropdown from "../common/dropdown/CivilStatusDropdown";
@@ -15,6 +15,7 @@ import GenderDropdown from "../common/dropdown/GenderDropdown";
 import PageSubtitle from "../common/typography/PageSubtitle";
 import YearLevelDropdown from "./YearLevelDropdown";
 import { toTitle } from "@/utils/StringUtils";
+import * as StringUtils from '@/utils/StringUtils';
 
 export default function StudentModal(props: ModalProps) {
   const dispatch = useDispatch();
@@ -43,15 +44,46 @@ export default function StudentModal(props: ModalProps) {
 
   const [newStudent, setNewStudent] = useState<Student>(initialStudentValues);
   const [sameAddress, setSameAddress] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<any>("");
+
+  const MATCHING_FIELDS = ["firstName", "lastName", "gender", "birthday"];
+  const [matchParams, setMatchParams] = useState({});
 
   const studentFormValueChange = async(field: string, value: string) => {
+    if(MATCHING_FIELDS.includes(field)){
+      const newMatchParams = {...matchParams, [field]: value};
+      const paramsWithValues = Object.entries(newMatchParams).filter(entry => !StringUtils.isEmpty(entry[1]?.toString()));
+      if(paramsWithValues.length >= MATCHING_FIELDS.length){
+        const result = await getPotentialMatches(Resources.STUDENTS, newMatchParams);
+        if(result && result.content?.length > 0 && result.content?.[0]?._id !== newStudent?._id ){
+          setError(
+              <span><b>WARNING:</b> An existing student matches the details you are trying to input. 
+                <br/><br/>
+                <div style={{float: "left", marginRight: "20px"}}>
+                  <Avatar src={result.content[0]?.avatar && `../api/files/${result.content[0]?.avatar}`} style={{width: "36px", height: "36px"}}/>
+                </div>
+                <b>Student Number:</b> <Link href={`/students/${result.content?.[0]?._id}`}>{result.content?.[0]?.studentNumber}</Link>
+                <br/><b>Name:</b> {result.content?.[0]?.firstName + " " + result.content?.[0]?.lastName}
+                <br/><br/>Please check the above link to avoid duplicates.
+              </span>);
+        } else {
+          setError("");
+        }
+      }
+      setMatchParams(newMatchParams);
+    }
+
     setNewStudent({...newStudent, [field]: value});
+  }
+
+  const studentNumberValueChanged = async(field: string, value: string) => {
+    studentFormValueChange(field, value);
 
     if(value?.length > 5){
       const result = await getPotentialMatches(Resources.STUDENTS, {studentNumber: value});
-      if(result && result.content?.length > 0){
+      if(result && result.content?.length > 0 && result.content?.[0]?._id !== newStudent?._id ){
         setError(`The student number ${value} is already assigned to ${toTitle(result.content[0].firstName + " " + result.content[0].lastName)}`)
+        setNewStudent({...newStudent, studentNumber: props?.data?.studentNumber});
       } else {
         setError("");
       }
@@ -95,15 +127,16 @@ export default function StudentModal(props: ModalProps) {
 
   useEffect(() => {
     if(props.data){
-      setNewStudent(props.data)
+      setNewStudent(props.data);
+      setMatchParams({lastName: props.data?.lastName, firstName: props.data?.firstName, gender: props.data?.gender});
     }
   }, [props.data])
 
   return (
-    <CustomModal {...props} onClose={onClose} handleSubmit={handleSubmit}>
-        {error && error != "" && <Alert severity="error" onClose={() => setError("")}>{error}</Alert>}
+    <CustomModal {...props} onClose={onClose} handleSubmit={handleSubmit} error={error}>
+        {error && error != "" && <><Alert severity="error" onClose={() => setError("")}>{error}</Alert> <br/></>}
         <PageSubtitle>Academic Information</PageSubtitle>
-        <CustomTextField value={newStudent.studentNumber} required column='studentNumber' placeholder='Eg: 012345' handler={studentFormValueChange} style={defaultFormStyle}/>
+        <CustomTextField value={newStudent.studentNumber} required column='studentNumber' placeholder='Eg: 012345' handler={studentNumberValueChanged} style={defaultFormStyle}/>
         <CourseDropdown value={newStudent.courseId} required size='small' style={defaultFormStyle} handler={studentFormValueChange}/>
         <YearLevelDropdown value={newStudent.yearLevel} size='small' style={{...defaultFormStyle, marginRight: '0px'}} handler={studentFormValueChange}/>
         <CustomTextField value={newStudent.cabinetId} column='cabinetId' title="Cabinet ID" handler={studentFormValueChange} style={defaultFormStyle}/>

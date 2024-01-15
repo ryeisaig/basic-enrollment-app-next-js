@@ -5,6 +5,7 @@ import { apiCall } from "@/utils/ApiUtils";
 export const save = async(resource: string, newData: any, dispatch: any, forceRemoveId?: boolean) => {
     forceRemoveId && delete newData._id;
     dispatch(setLoadingState(true));
+
     await apiCall(resource, {
         method: HttpMethod.POST, 
         body: JSON.stringify(newData),
@@ -24,8 +25,18 @@ export const saveNoDispatch = async(resource: string, newData: any, forceRemoveI
         }});
 }
 
-export const getList = async (resource: string, params: any, dispatch: any) => {
-    dispatch(setLoadingState(true));
+export const update = async(resource: string, id: string, dispatch: any, newData?: any) => {
+    await apiCall(`${resource}/${id}`, {
+        method: HttpMethod.PATCH, 
+        body: JSON.stringify(newData),
+        headers: {
+            'Content-Type' : 'application/json'
+        }});
+    await getList(resource, {}, dispatch, true);
+}
+
+export const getList = async (resource: string, params: any, dispatch: any, hideLoading?: boolean) => {
+    !hideLoading && dispatch(setLoadingState(true));
     const response = await apiCall(`${resource}?${new URLSearchParams({
         page: params.page || 0,
         rowsPerPage: params.rowsPerPage || 5,
@@ -40,6 +51,7 @@ export const getList = async (resource: string, params: any, dispatch: any) => {
         totalElements: data.totalElements,
         ...params
     }));
+    return data;
 }
 
 export const getAll = async (resource: string, lookupKey: string, dispatch: any) => {

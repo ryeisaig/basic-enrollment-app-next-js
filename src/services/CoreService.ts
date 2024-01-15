@@ -3,7 +3,8 @@ import clientPromise from '../lib/mongodb';
 import { ObjectId } from 'mongodb';
 // @ts-ignore
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { NextApiRequest } from "next";
+import { headers } from 'next/headers'
+
 
 export type Mapping = {
   collection: string;
@@ -12,9 +13,9 @@ export type Mapping = {
   type: "many" | "single"
 }
 
-const verifyJWT = (token: any) => {
+const verifyJWT = async (token: any) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET!);
     return decoded as JwtPayload;
   } catch (error: any) {
     console.log(error);
@@ -22,15 +23,17 @@ const verifyJWT = (token: any) => {
   }
 }
 
-export const validateRequest = (req: any, requiredPermissions?: string[]) => {
-  const accessToken = req.headers?.authorization?.split(' ')[1];
+export const validateRequest = async (requiredPermissions?: string[]) => {
+  const headersList = headers()
+  const accessToken = headersList.get('authorization')?.split(' ')[1]
+ 
   if(accessToken === process.env.BYPASS_TOKEN){
     return;
   }
 
   if(!accessToken) return Response.json({message: 'Unauthorized!'}, {status: 401});
 
-  const decoded = verifyJWT(accessToken);
+  const decoded = await verifyJWT(accessToken);
   if (!decoded) {
     return Response.json({message: 'Unauthorized!'}, {status: 401});
   } else if(requiredPermissions && !decoded.permissions?.some((p:string) => requiredPermissions.includes(p))){
@@ -195,29 +198,29 @@ export const getById = async(id: string, resource: string, mapping?: Mapping[]) 
   return Response.json({content: data[0]})
 }
 
-export const create = async(newData: any, resource: string) => {
+export const create = async(newData: any, resource: string, auth?: any) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
     const request = newData;
     request.createDateTime = new Date();
-    request.updateDateTime = new Date();
+    request.createdBy = auth?.username;
     const data = await db.collection(resource).insertOne(request);
     return Response.json({'result': 'success', 'data': data}, {status: 201});
 }
   
 
-export const update = async(id: string, newData: any, resource: string) => {
+export const update = async(id: string, newData: any, resource: string, auth?: any) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
     const request = { ...newData};
     delete request._id;
     request.updateDateTime = new Date();
-  
+    request.updatedBy = auth?.username;
     await db.collection(resource).updateOne({_id : new ObjectId(id)}, { $set: request });
     return Response.json({'result': 'success'});
 }
 
-export const remove = async(id: string, resource: string) => {
+export const remove = async(id: string, resource: string, auth?: any) => {
     const client = await clientPromise;
     const db = client.db('enrollment');
 
@@ -225,6 +228,7 @@ export const remove = async(id: string, resource: string) => {
     const toBeDeleted = {...data};
 
     toBeDeleted.deleteDateTime= new Date();
+    toBeDeleted.deletedBy = auth?.username
     delete toBeDeleted._id;
 
     await db.collection(resource).updateOne({_id : new ObjectId(id)}, { $set: toBeDeleted });

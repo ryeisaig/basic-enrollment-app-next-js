@@ -10,6 +10,7 @@ export type BaseModalProps = {
   children: any;
   handleSubmit: any;
   data?: any
+  error?: any
 }
 
 export type ModalProps = {
@@ -41,7 +42,7 @@ export default function Confirm(props: BaseModalProps) {
         <form onSubmit={submit} style={{maxHeight: 'calc(90vh - 80px)', overflowY: 'scroll', paddingRight: '16px'}}>
           {...props.children}
           <div style={{marginBottom: '20px', marginTop: "12px"}}>
-            <Button type="submit" variant="contained" color="primary" style={{height: "40px", marginRight: "10px"}}>{LABELS.SUBMIT}</Button>
+            <Button disabled={props.error} type="submit" variant="contained" color="primary" style={{height: "40px", marginRight: "10px"}}>{LABELS.SUBMIT}</Button>
             <Button onClick={props.onClose} variant="contained" style={{height: "40px", background: "#fff", color: "#616161"}}>{LABELS.CANCEL}</Button>
           </div>
         </form>

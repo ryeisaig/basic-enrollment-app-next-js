@@ -24,7 +24,7 @@ export default function EnrollmentDataToolBar() {
             <EnrollButton />
             <SearchField placeholder="Search by student" handler={search} />
             <Box sx={{ minWidth: 180, marginLeft: '6px' }}>
-                <AcademicPeriodDropdown fullWidth handler={handleFilter} title="Filter by Academic Period" />
+                <AcademicPeriodDropdown  fullWidth handler={handleFilter} title="Filter by Academic Period" />
             </Box>
             <Box sx={{ minWidth: 180, marginLeft: '6px' }}>
                 <CourseTypeDropdown fullWidth handler={handleFilter} title="Filter by Program Type" />

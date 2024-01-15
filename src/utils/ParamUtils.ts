@@ -6,7 +6,7 @@ export const getListParams = (query: any) => {
   const rowsPerPage = parseInt(query.get("rowsPerPage")) ||  null; 
   const page = parseInt(query.get("page")) || null;
   const keyword = query.get("keyword");
-  const sortField = query.get("sortField") || "updateDateTime" ;
+  const sortField = query.get("sortField") || "createdDateTime" ;
   const sortType = query.get("sortType") || "desc";
 
   query.delete("rowsPerPage");
@@ -19,11 +19,15 @@ export const getListParams = (query: any) => {
 }
 
 export const getNonBlankOrNullQueryParam = (query: any) => {
- query.forEach((entry: any) => {
-    if(StringUtils.isEmpty(entry[1])){
-      query.delete(entry[0])
+  const params: any = {};
+
+  query.forEach((value: any, key: string) => {
+    if(StringUtils.isEmpty(value)){
+      query.delete(key)
+    } else {
+      params[key] = value
     }
   });
 
-  return query;
+  return params;
 }

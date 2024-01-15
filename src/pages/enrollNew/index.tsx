@@ -1,6 +1,6 @@
 import CustomPage from "@/components/common/wrapper/CustomPage";
 import PageTitle from "@/components/common/typography/PageTitle";
-import { Alert, Button, Divider, Stack } from "@mui/material";
+import { Alert, Avatar, Button, Divider, Link, Stack } from "@mui/material";
 import CustomTextField from "@/components/common/form/CustomTextField";
 import { Enrollment } from "@/types/enrollment";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ import CustomRadioField from "@/components/common/form/CustomRadio";
 import { getClassByClassCode, getClassesBySection } from "@/actions/ClassAction";
 import DeleteActionMenuItem from "@/components/common/menu/DeleteActionMenuItem";
 import { useRouter } from "next/router";
-import { getById, getList, save, saveNoDispatch } from "@/actions/CoreActions";
+import { getById, getList, getPotentialMatches, save, saveNoDispatch } from "@/actions/CoreActions";
 import { Resources } from "@/utils/ApiConstants";
 import CourseDropdown from "@/components/course/CourseDropdown";
 import SectionDropdown from "@/components/section/SectionDropdown";
@@ -35,6 +35,7 @@ import { LABELS } from "@/utils/Labels";
 import CourseTypeDropdown from "@/components/course/CourseTypeDropdown";
 import SuccessDialog from "@/components/common/wrapper/SuccessDialog";
 import { withPagePermission } from "@/components/auth/withPermission";
+import AvatarDisplay from "@/components/student/Avatar";
 
 function EnrollNew() {
   const dispatch = useDispatch();
@@ -43,7 +44,7 @@ function EnrollNew() {
 
   const { currentStudent, currentClasses, classesError }: any = useSelector(selectEnrollmentState);
   const { lookups }: any = useSelector(selectListState);
-
+  
   const initialValues  = {
     studentType: 'new',
     student: {
@@ -75,6 +76,7 @@ function EnrollNew() {
     academicPeriodId: "",
     enrollmentType: ""
   };
+
   const [newEnrollment, setNewEnrollment] = useState<Enrollment>(initialValues);
   const [classCode, setClassCode] = useState<string>("");
   const [classActiveAlert, setClassActiveAlert] = useState<string>("");
@@ -88,6 +90,11 @@ function EnrollNew() {
     message: '',
   })
 
+  const [error, setError] = useState<any>();
+
+  const MATCHING_FIELDS = ["firstName", "lastName", "gender"];
+  const [matchParams, setMatchParams] = useState({});
+
   const formValueChange = (field: string, value: any) => {
     if(field === "classCode"){
       setClassCode(value)
@@ -96,7 +103,29 @@ function EnrollNew() {
     setNewEnrollment({...newEnrollment, [field]: value});
   }
 
-  const formStudentValueChange = (field: string, value: any) => {
+  const formStudentValueChange = async (field: string, value: any) => {
+    if(MATCHING_FIELDS.includes(field)){
+      const newMatchParams = {...matchParams, [field]: value};
+      const paramsWithValues = Object.entries(newMatchParams).filter(entry => !StringUtils.isEmpty(entry[1]));
+      if(paramsWithValues.length >= MATCHING_FIELDS.length){
+        const result = await getPotentialMatches(Resources.STUDENTS, newMatchParams);
+        if(result && result.content?.length > 0){
+          setError(
+              <span><b>WARNING:</b> An existing student matches the details you are trying to input. 
+                <br/><br/>
+                <div style={{float: "left", marginRight: "20px"}}>
+                  <Avatar src={result.content[0]?.avatar && `../api/files/${result.content[0]?.avatar}`} style={{width: "36px", height: "36px"}}/>
+                </div>
+                <b>Student Number:</b> <Link href={`/students/${result.content?.[0]?._id}`}>{result.content?.[0]?.studentNumber}</Link>
+                <br/><b>Name:</b> {result.content?.[0]?.firstName + " " + result.content?.[0]?.lastName}
+                <br/><br/>If this is the same student, please use the <Link href="/enrollExisting">Enroll Existing</Link> feature to avoid duplicates.
+              </span>);
+        } else {
+          setError("");
+        }
+      }
+      setMatchParams(newMatchParams);
+    }
     setNewEnrollment({...newEnrollment, student: {...newEnrollment.student, [field]: value}});
   }
 
@@ -124,7 +153,7 @@ function EnrollNew() {
 
   const addClass = (e: any) => {
     e.preventDefault();
-    if(newEnrollment.academicPeriodId){
+    if(newEnrollment.academicPeriodId && !StringUtils.isEmpty(newEnrollment.courseType) && !StringUtils.isEmpty(classCode)){
       getClassByClassCode(dispatch, classCode, newEnrollment.academicPeriodId);
     } else {
       setClassActiveAlert("missing")
@@ -153,14 +182,19 @@ function EnrollNew() {
 
   const handleSubmit = async(e: any) => {
     e.preventDefault();
-    await save(Resources.ENROLLMENTS, newEnrollment, dispatch);
-    setShowSuccessDialog({
-      open: true, 
-      message: SUCCESS_MESSAGES.SUCCESSFUL_ENROLLMENT
-    });
-    setNewEnrollment(initialValues);
-    setClassCode("");
-    setClassActiveAlert("")
+    if(newEnrollment.classes?.length > 0){
+      await save(Resources.ENROLLMENTS, newEnrollment, dispatch);
+      setShowSuccessDialog({
+        open: true, 
+        message: SUCCESS_MESSAGES.SUCCESSFUL_ENROLLMENT
+      });
+      setNewEnrollment(initialValues);
+      setClassCode("");
+      setClassActiveAlert("")
+    } else {
+      setClassActiveAlert("no_classes");
+    }
+    
   }
 
 
@@ -215,16 +249,23 @@ function EnrollNew() {
     id && initializeData(id);
   }, [id])
 
+  useEffect(() => {
+    const defaultAcademicPeriodId = lookups?.academicPeriod?.filter((lookup: any) => lookup.enrollmentActive)?.[0]?._id;
+    defaultAcademicPeriodId && setNewEnrollment({...newEnrollment, academicPeriodId: defaultAcademicPeriodId});
+  }, [lookups])
+
   return withPagePermission(["enrollments.create","enrollments.create-group"],
     <CustomPage>
       <form onSubmit={handleSubmit} >
         <div style={{paddingRight: "15px"}}>
-          <Button type="submit" variant="contained" color="primary" style={{float: "right", height: "32px"}}>{LABELS.SUBMIT}</Button>
+          <Button disabled={error} type="submit" variant="contained" color="primary" style={{float: "right", height: "32px"}}>{LABELS.SUBMIT}</Button>
           <Button variant="contained" color="secondary" onClick={() => router.back()} style={{float: "right", height: "32px", marginRight: "10px"}}>{LABELS.CANCEL}</Button>
         </div>
         <PageTitle>Enroll New Student</PageTitle>
         <Divider style={{marginBottom: '20px', marginTop: "10px"}}/>
         <div style={{padding: "15px", paddingTop: "0px"}}>
+            {error && error != "" && <><Alert severity="warning" onClose={() => setError("")}>{error}</Alert> <br/></>}
+    
             <PageSubtitle>Personal Information</PageSubtitle>
             <CustomTextField value={newEnrollment?.student?.studentNumber} column='studentNumber' disabled style={defaultFormStyle}/>
             <br/>
@@ -264,10 +305,11 @@ function EnrollNew() {
             <br/>
         </div>
         <Stack sx={{ margin: "15px"}} spacing={2}>
+            { classActiveAlert === "no_classes" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>At least one class is required.</Alert> }
             { classActiveAlert === "error" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>No class found for this class code.</Alert> }
-            { classActiveAlert === "missing" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>Academic period and program type must be selected.</Alert> }
+            { classActiveAlert === "missing" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>Academic period & program type must be selected and class code must not be empty.</Alert> }
         </Stack>
-        <CustomTextField disabled={newEnrollment.enrollmentType === "regular"}  column='classCode' title="Enter the class code to add" value={classCode} style={{marginLeft: "15px"}} handler={formValueChange} onEnter={(e: any) => addClass(e)}/>
+        <CustomTextField disabled={newEnrollment.enrollmentType === "regular"}  column='classCode' title="Enter the class code to add" value={classCode} style={{marginLeft: "15px"}} handler={formValueChange} onEnter={addClass}/>
         <Button disabled={newEnrollment.enrollmentType === "regular"} variant="contained" color="primary" style={{height: "40px", marginRight: "5px"}} onClick={addClass}><Add/></Button>
         <span>OR</span>
         <Button 
@@ -295,7 +337,7 @@ function EnrollNew() {
             }}
         />
         <div style={{padding: "15px", paddingBottom: "50px"}}>
-          <Button type="submit" variant="contained" color="primary" style={{float: "right", height: "32px"}}>{LABELS.SUBMIT}</Button>
+          <Button  disabled={error} type="submit" variant="contained" color="primary" style={{float: "right", height: "32px"}}>{LABELS.SUBMIT}</Button>
           <Button variant="contained" color="secondary" onClick={() => router.back()} style={{float: "right", height: "32px", marginRight: "10px"}}>{LABELS.CANCEL}</Button>
         </div>
         <ConfirmDialog 

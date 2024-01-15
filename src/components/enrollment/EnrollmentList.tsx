@@ -53,7 +53,7 @@ export default function EnrollmentList() {
                 open={open} 
                 onClose={onClose}/>}
             />
-            <LinkMenuItem link={data.studentType === 'new' ? `/enrollNew?id=${data._id}` : `/EnrollExisting?id=${data._id}`} label="Edit" />
+            <LinkMenuItem link={data.studentType === 'new' ? `/enrollNew?id=${data._id}` : `/enrollExisting?id=${data._id}`} label="Edit" />
             <DeleteActionMenuItem 
                 warningMessage={`You are going to permanently remove this from the enrollment list. Do you really want to proceed?`} 
                 submit={() => handleDelete(data._id)}

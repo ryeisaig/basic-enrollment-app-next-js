@@ -10,7 +10,6 @@ type DialogProps = {
 }
 
 export default function ConfirmDialog(props: DialogProps) {
-
   return (
     <Dialog
       open={props.open}

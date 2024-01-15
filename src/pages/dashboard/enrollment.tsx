@@ -20,7 +20,7 @@ export default function Dashboard() {
     return (
       <CustomPage>
           <PageTitle style={{float: "left"}}>Enrollment Dashboard for AY 2023 2nd Semester</PageTitle>
-          <AcademicPeriodDropdown value="6442c3bbe8cf821a475f01e9" size='small' handler={() => {}} title="Academic Period" style={{float: "right"}}/>
+          <AcademicPeriodDropdown  value="6442c3bbe8cf821a475f01e9" size='small' handler={() => {}} title="Academic Period" style={{float: "right"}}/>
           <br/><br/><Divider style={{marginBottom: '10px'}}/>
           <ListWrapper>
             <div style={{display: "flex", marginBottom: "40px"}}>

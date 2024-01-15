@@ -1,6 +1,6 @@
 import CustomPage from "@/components/common/wrapper/CustomPage";
 import PageTitle from "@/components/common/typography/PageTitle";
-import { Alert, Button, Divider, Stack } from "@mui/material";
+import { Alert, Avatar, Button, Divider, Link, Stack } from "@mui/material";
 import CustomTextField from "@/components/common/form/CustomTextField";
 import { Enrollment } from "@/types/enrollment";
 import { useEffect, useState } from "react";
@@ -20,7 +20,7 @@ import CustomRadioField from "@/components/common/form/CustomRadio";
 import { getClassByClassCode, getClassesBySection } from "@/actions/ClassAction";
 import DeleteActionMenuItem from "@/components/common/menu/DeleteActionMenuItem";
 import { useRouter } from "next/router";
-import { getById, getList, save, saveNoDispatch } from "@/actions/CoreActions";
+import { getById, getList, getPotentialMatches, save, saveNoDispatch } from "@/actions/CoreActions";
 import { Resources } from "@/utils/ApiConstants";
 import CourseDropdown from "@/components/course/CourseDropdown";
 import SectionDropdown from "@/components/section/SectionDropdown";
@@ -90,7 +90,31 @@ function EnrollExisting() {
     message: '',
   })
 
-  const formValueChange = (field: string, value: any) => {
+  const MATCHING_FIELDS = ["academicPeriodId", "studentNumber"];
+  const [matchParams, setMatchParams] = useState({});
+
+  const [error, setError] = useState<any>();
+
+  const getMatches = async(field: string, value: string) => {
+    if(MATCHING_FIELDS.includes(field)){
+      const newMatchParams: any = {...matchParams, [field]: value};
+      if(Object.keys(newMatchParams).length >= MATCHING_FIELDS.length){
+        const params = {filters: {academicPeriodId: newMatchParams.academicPeriodId, keyword: newMatchParams["studentNumber"]}}
+        const result = await getList(Resources.ENROLLMENTS, params, dispatch, true);
+        if(result && result.content?.length > 0){
+          setError(
+            <span><b>ERROR: </b>The student you selected has a {result.content?.[0]?.status} enrollment for this academic period. 
+              <br/><br/>
+              Please check this student's <Link href={`/enrollExisting?id=${result.content?.[0]?._id}`}>enrollment form</Link> and continue from there to avoid duplicates.
+            </span>);
+        } else {
+          setError("");
+        }
+      }
+      setMatchParams(newMatchParams);
+    }
+  }
+  const formValueChange = async (field: string, value: any) => {
     if(field === "studentNumber"){
       setStudentNumber(value)
       return;
@@ -99,6 +123,7 @@ function EnrollExisting() {
       setClassCode(value)
       return;
     }
+    await getMatches(field, value);
     setNewEnrollment({...newEnrollment, [field]: value});
   }
 
@@ -109,7 +134,7 @@ function EnrollExisting() {
 
   const addClass = (e: any) => {
     e.preventDefault();
-    if(newEnrollment.academicPeriodId){
+    if(newEnrollment.academicPeriodId && !StringUtils.isEmpty(newEnrollment.courseType) && !StringUtils.isEmpty(classCode)){
       getClassByClassCode(dispatch, classCode, newEnrollment.academicPeriodId);
     } else {
       setClassActiveAlert("missing")
@@ -138,16 +163,20 @@ function EnrollExisting() {
 
   const handleSubmit = async(e: any) => {
     e.preventDefault();
-    await save(Resources.ENROLLMENTS, newEnrollment, dispatch);
-    setShowSuccessDialog({
-      open: true, 
-      message: SUCCESS_MESSAGES.SUCCESSFUL_ENROLLMENT
-    });
-    setNewEnrollment(initialValues);
-    setClassCode("");
-    setStudentNumber("");
-    setActiveAlert("");
-    setClassActiveAlert("")
+    if(newEnrollment.classes?.length > 0 && !StringUtils.isEmpty(newEnrollment.studentId)){
+      await save(Resources.ENROLLMENTS, newEnrollment, dispatch);
+      setShowSuccessDialog({
+        open: true, 
+        message: SUCCESS_MESSAGES.SUCCESSFUL_ENROLLMENT
+      });
+      setNewEnrollment(initialValues);
+      setClassCode("");
+      setStudentNumber("");
+      setActiveAlert("");
+      setClassActiveAlert("")
+    } else {
+      setClassActiveAlert("no_classes");
+    }
   }
 
 
@@ -155,10 +184,11 @@ function EnrollExisting() {
     if(currentStudent?._id){
       setNewEnrollment({...newEnrollment, student: currentStudent, studentId: currentStudent._id});
       setActiveAlert("success");
-    } else if(studentNumber.trim() != "") {
+    } else if(!StringUtils.isEmpty(studentNumber)) {
       setActiveAlert("error");
       setNewEnrollment({...newEnrollment, student: initialValues.student});
     }
+    getMatches("studentNumber", currentStudent?.studentNumber);
   }, [currentStudent])
 
   useEffect(() => {
@@ -200,29 +230,38 @@ function EnrollExisting() {
   const initializeData = async(enrollmentId: any) => {
     const data = await getById(Resources.ENROLLMENTS, enrollmentId);
     setNewEnrollment(data?.content);
+    setStudentNumber(data?.content?.student?.studentNumber);
   }
 
   useEffect(() => {
     id && initializeData(id);
   }, [id])
 
-  return withPagePermission(["enrollments.create","enrollments.create-group"],
+  useEffect(() => {
+    const defaultAcademicPeriodId = lookups?.academicPeriod?.filter((lookup: any) => lookup.enrollmentActive)?.[0]?._id;
+    defaultAcademicPeriodId && setNewEnrollment({...newEnrollment, academicPeriodId: defaultAcademicPeriodId});
+    defaultAcademicPeriodId && setMatchParams({...matchParams, academicPeriodId: defaultAcademicPeriodId});
+  }, [lookups])
+
+  return withPagePermission(["enrollments.create","enrollments.create-group", "enrollments.update", "enrollments.update-group"],
     <CustomPage>
       <form onSubmit={handleSubmit} >
         <div style={{paddingRight: "15px"}}>
-          <Button type="submit" variant="contained" color="primary" style={{float: "right", height: "40px"}}>{LABELS.SUBMIT}</Button>
+          <Button disabled={error} type="submit" variant="contained" color="primary" style={{float: "right", height: "40px"}}>{LABELS.SUBMIT}</Button>
           <Button variant="contained" color="secondary" onClick={() => router.back()} style={{float: "right", height: "40px", marginRight: "10px"}}>{LABELS.CANCEL}</Button>
         </div>
         <PageTitle>Enroll Existing Student</PageTitle>
         <Divider style={{marginBottom: '20px', marginTop: "20px"}}/>
         <div style={{padding: "15px", paddingTop: "0px"}}>
             <Stack sx={{ marginBottom: "15px"}} spacing={2}>
-                { activeAlert === "error" && <Alert severity="error" onClose={() => setActiveAlert("")}>{WARNING_MESSAGES.NO_STUDENT_FOUND_FOR_STUDENT_NUMBER}</Alert> }
-                { activeAlert === "success" && <Alert onClose={() => setActiveAlert("")}>{SUCCESS_MESSAGES.VALID_STUDENT_FOUND_FOR_STUDENT_NUMBER}</Alert> }
+                {error && error != "" && <><Alert severity="error" onClose={() => setError("")}>{error}</Alert></>}
+                { !error && activeAlert === "error" && <Alert severity="error" onClose={() => setActiveAlert("")}>{WARNING_MESSAGES.NO_STUDENT_FOUND_FOR_STUDENT_NUMBER}</Alert> }
+                { !error && activeAlert === "success" && <Alert onClose={() => setActiveAlert("")}>{SUCCESS_MESSAGES.VALID_STUDENT_FOUND_FOR_STUDENT_NUMBER}</Alert> }
             </Stack>
+
             <PageSubtitle>Search Student</PageSubtitle>
-            <CustomTextField value={studentNumber} column='studentNumber' style={defaultFormStyle} handler={formValueChange} onEnter={(e: any) =>  { e.preventDefault(); getStudentByStudentNumber(dispatch, studentNumber)}}/>
-            <Button variant="contained" style={{height: "40px"}} onClick={() => getStudentByStudentNumber(dispatch, studentNumber)}><Search/></Button>
+            <CustomTextField  disabled={!StringUtils.isEmpty(id)} value={studentNumber} column='studentNumber' style={defaultFormStyle} handler={formValueChange} onEnter={(e: any) =>  { e.preventDefault(); getStudentByStudentNumber(dispatch, studentNumber)}}/>
+            <Button disabled={!StringUtils.isEmpty(id)} variant="contained" style={{height: "40px"}} onClick={() => getStudentByStudentNumber(dispatch, studentNumber)}><Search/></Button>
             <br/>
             <PageSubtitle>Personal Information</PageSubtitle>
             <CustomTextField value={newEnrollment?.student?.lastName} column='lastName' disabled style={defaultFormStyle}/>
@@ -251,7 +290,7 @@ function EnrollExisting() {
             <CustomTextField value={newEnrollment?.student?.guardians && newEnrollment?.student?.guardians[1]?.mobileNumber || ''} column='guardian.1.mobileNumber' title="Guardian's Mobile Number" disabled style={defaultFormStyle}/>
             <CustomTextField value={newEnrollment?.student?.guardians && newEnrollment?.student?.guardians[1]?.relationship || ''} column='guardian.1.relationship' title="Relationship" disabled style={defaultFormStyle} />
             <PageSubtitle>Enrollment Details</PageSubtitle>
-            <AcademicPeriodDropdown value={newEnrollment.academicPeriodId} size='small' required style={defaultFormStyle} handler={formValueChange}/>
+            <AcademicPeriodDropdown  value={newEnrollment.academicPeriodId} size='small' required style={defaultFormStyle} handler={formValueChange}/>
             <CourseTypeDropdown title="Program Type" value={newEnrollment.courseType} size='small' required style={defaultFormStyle} handler={formValueChange}/>
             <CourseDropdown filter={{courseType: newEnrollment.courseType}} value={newEnrollment.courseId} size='small' required style={defaultFormStyle} handler={formValueChange}/>
             <br/>
@@ -261,10 +300,11 @@ function EnrollExisting() {
             <br/>
         </div>
         <Stack sx={{ margin: "15px"}} spacing={2}>
+            { classActiveAlert === "no_classes" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>Student must be selected and at least one class is required.</Alert> }
             { classActiveAlert === "error" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>No class found for this class code.</Alert> }
-            { classActiveAlert === "missing" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>Academic period and program type must be selected.</Alert> }
+            { classActiveAlert === "missing" && <Alert severity="error" onClose={() => setClassActiveAlert("")}>Academic period & program type must be selected and class code must not be empty.</Alert> }
         </Stack>
-        <CustomTextField disabled={newEnrollment.enrollmentType === "regular"}  column='classCode' title="Enter the class code to add" value={classCode} style={{marginLeft: "15px"}} handler={formValueChange} onEnter={(e: any) => addClass(e)}/>
+        <CustomTextField disabled={newEnrollment.enrollmentType === "regular"}  column='classCode' title="Enter the class code to add" value={classCode} style={{marginLeft: "15px"}} handler={formValueChange} onEnter={addClass}/>
         <Button disabled={newEnrollment.enrollmentType === "regular"} variant="contained" color="primary" style={{height: "40px", marginRight: "5px"}} onClick={addClass}><Add/></Button>
         <span>OR</span>
         <Button 
@@ -292,7 +332,7 @@ function EnrollExisting() {
             }}
         />
         <div style={{padding: "15px", paddingBottom: "50px"}}>
-          <Button type="submit" variant="contained" color="primary" style={{float: "right", height: "40px"}}>{LABELS.SUBMIT}</Button>
+          <Button disabled={error} type="submit" variant="contained" color="primary" style={{float: "right", height: "40px"}}>{LABELS.SUBMIT}</Button>
           <Button variant="contained" color="secondary" onClick={() => router.back()} style={{float: "right", height: "40px", marginRight: "10px"}}>{LABELS.CANCEL}</Button>
         </div>
         <ConfirmDialog 

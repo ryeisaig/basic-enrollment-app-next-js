@@ -5,7 +5,7 @@ export type Role = {
     permissions: string[];
     status: string;
     createdBy?: string;
-    lastUpdatedBy?: string;
+    updatedBy?: string;
     dateCreated?: string;
-    dateLastUpdated?: string;
+    updateDateTime?: string;
 }

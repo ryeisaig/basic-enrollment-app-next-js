@@ -11,6 +11,7 @@ import ActionMenu from '../menu/ActionMenu';
 import PageSubtitle from '../typography/PageSubtitle';
 import PageTitle from '../typography/PageTitle';
 import { toTitle } from '@/utils/StringUtils';
+import { useDispatch } from 'react-redux';
 
 export type ListProps<T> = {
   columns: Column[];
@@ -96,6 +97,8 @@ export const getData = (col: Column, row: any, json?: boolean) => {
 }
 
 export default function DefaultList(props: ListProps<any>) {
+  const dispatch = useDispatch();
+  
   return (
     <div style={{padding: "15px", paddingTop: "15px"}}>
       {props.inner ? <PageSubtitle>{props.title}</PageSubtitle> : <PageTitle>{props.title}</PageTitle>}
@@ -119,9 +122,9 @@ export default function DefaultList(props: ListProps<any>) {
                   props.columns.map((col: Column) => (
                     <StyledTableCell key={col.key} align={col.align ? col.align : 'left'} width={col.width}>
                         {col.presentation ? 
-                          col.presentation(getData(col, row, col.json)) :
+                          col.presentation(getData(col, row, col.json), row) :
                           col.transform ?
-                            col.transform(getData(col, row, col.json)) : 
+                            col.transform(getData(col, row, col.json), row, dispatch) : 
                             getData(col, row)}
                     </StyledTableCell>
                     ))

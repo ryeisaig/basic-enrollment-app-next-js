@@ -1,6 +1,6 @@
 import { selectListState } from '@/store/listSlice';
 import { toTitle } from '@/utils/StringUtils';
-import { TablePagination } from '@mui/material';
+import { Box, CircularProgress, TablePagination } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,12 +14,15 @@ import { Column, ListProps, StyledTableCell } from './DefaultList';
 
 export default function CollapsibleList(props: ListProps<any>) {
   
-  const {loading}: any = useSelector(selectListState);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const {loading}: any = useSelector(selectListState);
 
   return (
-    <div style={{overflow: "auto", paddingTop: "12px", maxHeight: "calc(100vh - 70px)"}}>    
+    <div style={{overflow: "auto", paddingTop: "12px", maxHeight: "calc(100vh - 70px)"}}>   
+     {/* {loading && <Box sx={{position: 'absolute', width: '100%', minHeight: '100vh', ZIndex: 999, display: 'flex', justifyContent: 'center', alignItems: 'center',  backgroundColor: 'rgba(255,255,255, 0.3)'}}>
+          <CircularProgress/>
+      </Box>}  */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }}  size="small" aria-label="customized table">
           <TableHead>
@@ -34,9 +37,7 @@ export default function CollapsibleList(props: ListProps<any>) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {loading ? 
-             <label>Loading...</label>
-            : props.data.map((row: any, i: number) => (
+            {props.data.map((row: any, i: number) => (
               <CollapsibleRow key={i} row={row} i={i} columns={props.columns} innerTable={props.innerTable} actions={props.actions}/>
             ))}
           </TableBody>
@@ -51,6 +52,7 @@ export default function CollapsibleList(props: ListProps<any>) {
           onRowsPerPageChange={(e: any) => {props.handleQueryChange({page: page, rowsPerPage: e.target.value}); setRowsPerPage(e.target.value)}}
         />
       </TableContainer>
+      
     </div>
   );
 }

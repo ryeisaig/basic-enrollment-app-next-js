@@ -66,7 +66,7 @@ export default function StudentProfile(){
           ]
         }
         data={data}
-        avatar={<Avatar src={`../api/files/${data?.avatar}`} style={{width: "120px", height: "120px", marginLeft: "10px"}}/>}
+        avatar={<Avatar src={data?.avatar && `../api/files/${data?.avatar}`} style={{width: "120px", height: "120px", marginLeft: "10px"}}/>}
         uploadAvatar={(file: any) => uploadPhoto(file)}
         primaryColumns={[
           { column: "studentNumber" },

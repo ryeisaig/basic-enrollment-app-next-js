@@ -9,6 +9,7 @@ import { periodMap } from "./AcademicSubPeriodDropdown";
 export default function AcademicPeriodDropdown(props: DropdownProps){
     const dispatch = useDispatch();
     const { lookups }: any = useSelector(selectListState);
+
     const acadPeriodOptions = lookups.academicPeriod ? lookups.academicPeriod.map((lookup: any) => { 
         return { key: lookup._id, value: `${lookup.year} - ${periodMap(lookup.period)}` }
     }) : [];

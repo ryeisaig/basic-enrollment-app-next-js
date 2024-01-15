@@ -1,8 +1,9 @@
 import { validateRequest } from '@/services/CoreService';
 import { writeFile } from 'fs/promises'
+import { v4 as uuid } from 'uuid';
 
 export async function POST(req: any) {
-    await validateRequest(req);
+    const auth = await validateRequest();
 
     const data = await req.formData()
     const file: File | null = data.get('file') as unknown as File
@@ -14,8 +15,10 @@ export async function POST(req: any) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const path = `/upload_files/${file.name}`;
+    const randomString = uuid();
+    const filePath = `${randomString}_${file.name}`;
+    const path = `/upload_files/${filePath}`;
     await writeFile(path, buffer);
 
-    return Response.json({ success: true, path: file.name })
+    return Response.json({ success: true, path: filePath })
 }

@@ -2,7 +2,7 @@ import { Mapping, create, getAll, update, validateRequest } from "@/services/Cor
 import { Resources } from "@/utils/ApiConstants";
 
 export async function GET(req: Request) {
-    await validateRequest(req);
+    const auth = await validateRequest();
 
     const mapping: Mapping[]= [
         { 
@@ -17,11 +17,11 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-    await validateRequest(req);
+    const auth = await validateRequest();
     const data = await req.json();
     if(data._id){
-        return await update(data._id, data, Resources.COURSES);
+        return await update(data._id, data, Resources.COURSES, auth);
     } else {
-        return await create(data, Resources.COURSES);
+        return await create(data, Resources.COURSES, auth);
     }
 }

@@ -3,7 +3,7 @@ import { processEnrollmentForNewStudent, processEnrollmentForOldStudent } from "
 import { Resources } from "@/utils/ApiConstants";
 
 export async function GET(req: Request) {
-    await validateRequest(req);
+    const auth = await validateRequest();
 
     const mapping: Mapping[]= [
         { 
@@ -26,16 +26,16 @@ export async function GET(req: Request) {
         }
       ];
 
-    return await getAll(req, Resources.ENROLLMENTS, [], mapping);
+    return await getAll(req, Resources.ENROLLMENTS, ["student.lastName", "student.firstName", "student.studentNumber"], mapping);
 }
 
 export async function POST(req: Request) {
-    await validateRequest(req);
+    const auth = await validateRequest();
     const data = await req.json();
 
     if(data.studentType !== 'new' && data.student?.studentNumber !== ''){
-        return await processEnrollmentForOldStudent(data);
+        return await processEnrollmentForOldStudent(data, auth);
     } else {
-        return await processEnrollmentForNewStudent(data);
+        return await processEnrollmentForNewStudent(data, auth);
     }
 }

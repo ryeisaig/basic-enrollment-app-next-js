@@ -5,7 +5,7 @@ export type AcademicPeriod = {
     gradingActive: boolean,
     enrollmentActive: boolean,
     createdBy?: string,
-    lastUpdatedBy?: string,
+    updatedBy?: string,
     dateCreated?: string,
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

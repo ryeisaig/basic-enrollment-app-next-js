@@ -6,7 +6,7 @@ export type Subject = {
     type?: "LEC" | "LAB",
     unit?: number,
     createdBy?: string,
-    lastUpdatedBy?: string,
+    updatedBy?: string,
     dateCreated?: string,
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

@@ -22,7 +22,7 @@ export default function GradeDataToolBar() {
     return (
         <Toolbar disableGutters>
             <Box sx={{ minWidth: 180, marginLeft: '6px' }}>
-                <AcademicPeriodDropdown fullWidth handler={handleFilter} title="Filter by Academic Period" />
+                <AcademicPeriodDropdown  fullWidth handler={handleFilter} title="Filter by Academic Period" />
             </Box>
             <Box sx={{ minWidth: 180, marginLeft: '6px' }}>
                 <InstructorDropdown fullWidth handler={handleFilter} title="Filter by Teacher" />

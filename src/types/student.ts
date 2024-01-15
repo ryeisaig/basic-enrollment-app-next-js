@@ -24,9 +24,9 @@ export type Student = {
     course?: Course, // should be updated from latest enrollment
     studentNumber?: string,
     createdBy?: string,
-    lastUpdatedBy?: string,
+    updatedBy?: string,
     dateCreated?: string,
-    dateLastUpdated?: string,
+    updateDateTime?: string,
     latesEnrollment?: Enrollment,
     avatar?: string
 }

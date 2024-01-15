@@ -3,7 +3,7 @@ export type College = {
     code: string,
     name: string,
     createdBy?: string,
-    lastUpdatedBy?: string,
+    updatedBy?: string,
     dateCreated?: string,
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

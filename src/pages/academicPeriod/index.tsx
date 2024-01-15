@@ -9,8 +9,16 @@ import * as DefaultColumns from "@/utils/DefaultColumns";
 import { Divider } from "@mui/material";
 import ListWrapper from "@/components/common/wrapper/ListWrapper";
 import { withPagePermission } from "@/components/auth/withPermission";
+import ConfirmDialog from "@/components/common/wrapper/ConfirmDialog";
+import { useState } from "react";
 
 function AcademicPeriodPage() {
+    const [showConfirmDialog, setShowConfirmDialog] = useState({
+      open: false,
+      message: '',
+      submit: () => {}
+    })
+
     return (
       withPagePermission(["academicPeriod.read", "academicPeriod.read-group"], <CustomPage>
          <PageTitle>Academic Period</PageTitle>

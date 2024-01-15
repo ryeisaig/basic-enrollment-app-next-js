@@ -7,6 +7,7 @@ import DeleteActionMenuItem from '../menu/DeleteActionMenuItem';
 import EditActionMenuItem from '../menu/EditActionMenuItem';
 import LinkMenuItem from '../menu/LinkMenuItem';
 import { deleteOne } from '@/actions/CoreActions';
+import { useRouter } from 'next/router';
 
 type DataListProps = {
   title: string;
@@ -16,14 +17,15 @@ type DataListProps = {
   innerTable?: any;
   resource: string;
   editPermissions?: string[],
-  deletePermissions?: string[]
+  deletePermissions?: string[],
 }
 
 export default function DefaultDataList(props: DataListProps) {
   const {data, totalElements}: any = useSelector(selectListState);
   const {filters, sort, keyword}: any = useSelector(selectListState);
   const dispatch = useDispatch();
-  
+  const router = useRouter() 
+
   React.useEffect(() => {
     props.resource && props.refresh(props.resource, {}, dispatch);
   }, [dispatch, props.resource]);
@@ -44,7 +46,7 @@ export default function DefaultDataList(props: DataListProps) {
       actions={(data: any) => {
         return (
           <>
-            <LinkMenuItem link={`/courses/${data._id}`} label="View Details" />
+            <LinkMenuItem link={`${router.pathname}/${data._id}`} label="View Details" />
             <EditActionMenuItem permissions={props.editPermissions}
                 modal={(open: boolean, onClose: any) => props.modal(open, onClose, data)} />
             <DeleteActionMenuItem 

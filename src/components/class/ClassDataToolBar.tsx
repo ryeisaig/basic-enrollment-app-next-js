@@ -27,7 +27,7 @@ export default function ClassDataToolBar() {
             <AddButton permissions={["classes.create","classes.create-group"]} modal={(open: boolean, onClose: any) => <ClassModal title="Add New Class" open={open} onClose={onClose}/>}/>
             <SearchField placeholder="Search class by class code ..." handler={search}/>
             <Box sx={{ minWidth: 140, marginLeft: '6px' }}>
-                <AcademicPeriodDropdown fullWidth handler={handleFilter} title="Filter by Academic Period" />
+                <AcademicPeriodDropdown  fullWidth handler={handleFilter} title="Filter by Academic Period" />
             </Box>
             <Box sx={{ minWidth: 140, marginLeft: '6px' }}>
                 <CourseDropdown fullWidth handler={handleFilter} title="Filter by Course" />

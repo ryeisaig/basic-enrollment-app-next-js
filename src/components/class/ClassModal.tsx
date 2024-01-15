@@ -72,7 +72,7 @@ export default function ClassModal(props: ModalProps) {
     <CustomModal {...props} onClose={onClose} handleSubmit={handleSubmit}>
         <PageSubtitle>Class Information</PageSubtitle>
         <CustomTextField value={newClass.code} required column='code' placeholder='Eg: 012345' handler={formValueChange} style={defaultFormStyle}/>
-        <AcademicPeriodDropdown value={newClass.academicPeriodId} required size='small' style={defaultFormStyle}  handler={formValueChange}/>
+        <AcademicPeriodDropdown  value={newClass.academicPeriodId} required size='small' style={defaultFormStyle}  handler={formValueChange}/>
         <CourseDropdown value={newClass.courseId} required size='small'  handler={formValueChange} style={{...defaultFormStyle, marginRight: "0px"}}/>
         <YearLevelDropdown value={newClass.yearLevel} size='small' handler={formValueChange} style={defaultFormStyle} />
         <SectionDropdown filter={{courseId: newClass.courseId, yearLevel: newClass.yearLevel}} value={newClass.sectionId} required size='small' handler={formValueChange} style={defaultFormStyle} />

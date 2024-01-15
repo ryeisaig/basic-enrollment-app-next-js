@@ -12,7 +12,7 @@ export type Section = {
     maxCount: number;
     isActive?: boolean;
     createdBy?: string,
-    lastUpdatedBy?: string,
+    updatedBy?: string,
     dateCreated?: string,
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

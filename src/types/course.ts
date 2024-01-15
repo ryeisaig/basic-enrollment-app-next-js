@@ -8,7 +8,7 @@ export type Course = {
     collegeId?: string;
     college?: College;
     createdBy?: string;
-    lastUpdatedBy?: string;
+    updatedBy?: string;
     dateCreated?: string;
-    dateLastUpdated?: string
+    updateDateTime?: string
 }

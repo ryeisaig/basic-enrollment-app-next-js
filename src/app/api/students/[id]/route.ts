@@ -3,7 +3,7 @@ import { Mapping, getById, remove, validateRequest } from "@/services/CoreServic
 import { Resources } from "@/utils/ApiConstants";
 
 export async function GET(req: NextApiRequest, { params }: { params: { id: string } }) {
-    await validateRequest(req);
+    const auth = await validateRequest();
 
     const mapping: Mapping[]= [
         { 
@@ -17,6 +17,6 @@ export async function GET(req: NextApiRequest, { params }: { params: { id: strin
 }
 
 export async function DELETE (req: NextApiRequest, { params }: { params: { id: string } }){
-    await validateRequest(req);
-    return await remove(params.id, Resources.STUDENTS);
+    const auth = await validateRequest();
+    return await remove(params.id, Resources.STUDENTS, auth);
 }

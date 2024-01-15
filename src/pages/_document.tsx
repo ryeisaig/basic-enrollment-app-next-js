@@ -1,4 +1,7 @@
 import { Head, Html, Main, NextScript } from 'next/document'
+import { useSelector } from 'react-redux';
+import { selectListState } from '@/store/listSlice';
+
 
 export default function Document() {
   return (

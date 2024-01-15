@@ -3,8 +3,13 @@ import { ordinals, toTitle } from "./StringUtils";
 import NotSpecified from "@/components/common/typography/NotSpecified";
 import moment from "moment";
 import { periodMap } from "@/components/academicPeriod/AcademicSubPeriodDropdown";
-import { Chip } from "@mui/material";
+import { Chip, Switch } from "@mui/material";
 import AvatarDisplay from "@/components/student/Avatar";
+import { save, saveNoDispatch, update } from "@/actions/CoreActions";
+import { useDispatch } from "react-redux";
+import { Resources } from "./ApiConstants";
+import ConfirmDialog from "@/components/common/wrapper/ConfirmDialog";
+import CustomToggle from "@/components/common/toggle/CustomToggle";
 
 export const STUDENT = {
     PRIMARY: [
@@ -26,8 +31,8 @@ export const STUDENT = {
         { key: "section", width: "100px"},
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "studentNumber"},
         { key: "lastName"},
         { key: "course"},
@@ -61,8 +66,8 @@ export const COLLEGE = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "code"},
         { key: "name"},
     ]
@@ -70,16 +75,32 @@ export const COLLEGE = {
 
 export const ACADEMIC_PERIOD = {
     PRIMARY: [
-        { key: "year"},
-        { key: "period", transform: (value: string) =>  periodMap(value)},
-        { key: "enrollmentActive", title:"Current Enrollment", transform: (value: string) =>  (value === "true") ? "Yes" : "No"},
-        { key: "gradingActive", title:"Current Grading", transform: (value: string) =>  (value === "true") ? "Yes" : "No"},
+        { key: "year", title: "Academic Year"},
+        { key: "period", title: "Academic Period", transform: (value: string) =>  periodMap(value)},
+        { key: "enrollmentActive", title:"Enrollment", transform: (value: string, data: any, dispatch: any) => 
+            <CustomToggle 
+                disabled={value === "true"} 
+                checked={value === "true"} 
+                submit={() => update(Resources.ACADEMIC_PERIODS, data._id, dispatch, { enrollmentActive: true})}
+                warningMessage="You are going to update the current academic period for enrollment"
+            />
+        },
+        { key: "gradingActive", title:"Grading", transform: (value: string, data: any, dispatch: any) => 
+            <CustomToggle 
+                disabled={value === "true"} 
+                checked={value === "true"} 
+                submit={() => update(Resources.ACADEMIC_PERIODS, data._id, dispatch, { gradingActive: true})}
+                warningMessage="You are going to update the current academic period for grading"
+            />
+        },
+        { key: "createdBy", transform: (value: any) => value !== "undefined" ? value : <NotSpecified />},
         { key: "createDateTime", title: "Date Created", transform: (value: string) => moment(value).format("MM/DD/YYYY HH:mm")},
+        { key: "updatedBy", transform: (value: any) => value !== "undefined" ? value : <NotSpecified />},
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "year"}
     ]
 }
@@ -95,8 +116,8 @@ export const ROOM = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "year"}
     ]
 }
@@ -112,8 +133,8 @@ export const SUBJECT = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "year"}
     ]
 }
@@ -128,8 +149,8 @@ export const INSTRUCTOR = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "year"}
     ]
 }
@@ -144,8 +165,8 @@ export const SECTION = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "year"}
     ]
 }
@@ -163,8 +184,8 @@ export const CLASS = {
         { key: "enrolled", title: "Enrolled"}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "code"}
     ]
 }
@@ -183,8 +204,8 @@ export const GRADE = {
         { key: "status"},
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
     ]
 }
 
@@ -200,8 +221,8 @@ export const USER = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
     ]
 }
 
@@ -215,8 +236,8 @@ export const ROLE = {
         { key: "updateDateTime", title: "Date Modified", transform: (value: string) => value !== "undefined" ? moment(value).format("MM/DD/YYYY HH:mm") : <NotSpecified/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
         { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"},
         { key: "code"},
         { key: "name"},
     ]
@@ -225,20 +246,21 @@ export const ROLE = {
 export const ENROLLMENT = {
     PRIMARY: [
         { key: "academicPeriod", title: "Academic Period", json: true, transform: (ay: any) =>  ay.year + " - " + periodMap(ay.period)},
+        { key: "student.avatar", title: " ", width: "60px", presentation: AvatarDisplay},
         { key: "student.studentNumber", title: "Student No."},
         { key: "student.lastName+,+student.firstName+student.middleName", title: "Name", transform: (value: string) => toTitle(value)},
         // { key: "courseType", title: "Type", transform: (value: string) => toTitle(value)},
         { key: "course.code", title: "Course"},
-        { key: "yearLevel", title: "Year", transform: (value: number) => value ? `${ordinals(value)} Yr` : <NotSpecified />},
+        { key: "yearLevel", title: "Year", transform: (value: number) => value ? `${ordinals(value)}` : <NotSpecified />},
         { key: "enrollmentType", presentation: RegularityBadge},
         { key: "studentType", transform: (value: string) => <Chip label={toTitle(value)}/>},
-        { key: "classes", title: "Total Classes", json: true, transform: (classes: any[]) => classes ? classes.length : 0},
-        { key: "classes", title: "Total Units", json: true, transform: (classes: any[]) => classes ? classes.reduce((total, classObj) => { return total + parseInt(classObj.subject.unit) }, 0) : 0},
+        { key: "classes", title: "Classes", json: true, transform: (classes: any[]) => classes ? classes.length : 0},
+        { key: "classes", title: "Units", json: true, transform: (classes: any[]) => classes ? classes.reduce((total, classObj) => { return total + parseInt(classObj.subject.unit) }, 0) : 0},
         { key: "status", transform: (value: string) => <Chip label={toTitle(value)}/>}
     ],
     SORTER: [
-        { key: "updateDateTime", value: "Date Modified"},
-        { key: "createDateTime", value: "Date Created"}
+        { key: "createDateTime", value: "Date Created"},
+        { key: "updateDateTime", value: "Date Modified"}
     ]
 }
 

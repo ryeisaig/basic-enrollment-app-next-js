@@ -3,7 +3,7 @@ import { Mapping, getById, getPotentialMatches, validateRequest } from "@/servic
 import { Resources } from "@/utils/ApiConstants";
 
 export async function GET(req: Request) {
-    await validateRequest(req);
+    const auth = await validateRequest();
 
     const mapping: Mapping[]= [
         { 
